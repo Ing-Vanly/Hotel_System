@@ -5,151 +5,84 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use App\Models\User;
+use App\Models\Role; // Add this line
 use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class UserManagementController extends Controller
 {
-    /** user list */
+    /** Show user list page */
     public function userList()
     {
         return view('usermanagement.listuser');
     }
 
-    /** add neew users */
+    /** Show add new user form */
     public function userAddNew()
     {
-        return view('usermanagement.useraddnew');
+        $roles = Role::all(); // Get all roles from the roles table
+        return view('usermanagement.useraddnew', compact('roles'));
     }
 
-    /** edit record */
+    /** Show edit user form */
     public function userView($user_id)
     {
-        $userData = User::where('user_id',$user_id)->first();
-        return view('usermanagement.useredit',compact('userData'));
+        $userData = User::where('user_id', $user_id)->firstOrFail();
+        $roles = Role::all(); // Get roles for edit form too
+        return view('usermanagement.useredit', compact('userData', 'roles'));
     }
 
-    /** update record */
+    /** Update user record */
     public function userUpdate(Request $request)
     {
+        $request->validate([
+            'user_id'      => 'required|string|exists:users,user_id',
+            'name'         => 'required|string|max:255',
+            'email'        => 'required|email|max:255|unique:users,email,' . $request->user_id . ',user_id',
+            'phone_number' => 'nullable|string|max:20',
+            'role_id'      => 'required|exists:roles,id', // Changed to role_id
+            'gender'       => 'nullable|in:male,female,other',
+            'age'          => 'nullable|integer|min:0',
+            'address'      => 'nullable|string|max:255',
+            'image'        => 'nullable|image|max:2048',
+        ]);
+
         DB::beginTransaction();
         try {
-            $updateRecord = [
-                'name'         => $request->name,
-                'email'        => $request->email,
-                'phone_number' => $request->phone_number,
-                'position'     => $request->position,
-                'department'   => $request->department,
-            ];
+            $user = User::where('user_id', $request->user_id)->firstOrFail();
+            $role = Role::findOrFail($request->role_id);
 
-            User::where('user_id',$request->user_id)->update($updateRecord);
-        
+            // Update fields
+            $user->name         = $request->name;
+            $user->email        = $request->email;
+            $user->phone_number = $request->phone_number;
+            $user->role         = $role->name; // Store role name
+            $user->role_id      = $role->id;   // Store role ID
+            $user->gender       = $request->gender;
+            $user->age          = $request->age;
+            $user->address      = $request->address;
+
+            // Handle image upload if exists
+            if ($request->hasFile('image')) {
+                if ($user->image && Storage::disk('public')->exists($user->image)) {
+                    Storage::disk('public')->delete($user->image);
+                }
+                $path = $request->file('image')->store('user_images', 'public');
+                $user->image = $path;
+            }
+
+            $user->save();
+
             DB::commit();
-            Toastr::success('Updated record successfully :)','Success');
+            Toastr::success('Updated record successfully :)', 'Success');
             return redirect()->back();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
-            Toastr::error('Update record fail :)','Error');
+            Toastr::error('Update record failed: ' . $e->getMessage(), 'Error');
             return redirect()->back();
         }
     }
 
-    /** delete record */
-    public function userDelete($id)
-    {
-        try {
-
-            $deleteRecord = User::find($id);
-            $deleteRecord->delete();
-            Toastr::success('User deleted successfully :)','Success');
-            return redirect()->back();
-        
-        } catch(\Exception $e) {
-            DB::rollback();
-            Toastr::error('User delete fail :)','Error');
-            return redirect()->back();
-        }
-    }
-
-    /** get users data */
-    public function getUsersData(Request $request)
-    {
-        $draw            = $request->get('draw');
-        $start           = $request->get("start");
-        $rowPerPage      = $request->get("length"); // total number of rows per page
-        $columnIndex_arr = $request->get('order');
-        $columnName_arr  = $request->get('columns');
-        $order_arr       = $request->get('order');
-        $search_arr      = $request->get('search');
-
-        $columnIndex     = $columnIndex_arr[0]['column']; // Column index
-        $columnName      = $columnName_arr[$columnIndex]['data']; // Column name
-        $columnSortOrder = $order_arr[0]['dir']; // asc or desc
-        $searchValue     = $search_arr['value']; // Search value
-
-        $users =  DB::table('users');
-        $totalRecords = $users->count();
-
-        $totalRecordsWithFilter = $users->where(function ($query) use ($searchValue) {
-            $query->where('name', 'like', '%' . $searchValue . '%');
-            $query->orWhere('email', 'like', '%' . $searchValue . '%');
-            $query->orWhere('position', 'like', '%' . $searchValue . '%');
-            $query->orWhere('phone_number', 'like', '%' . $searchValue . '%');
-            $query->orWhere('status', 'like', '%' . $searchValue . '%');
-        })->count();
-
-        if ($columnName == 'name') {
-            $columnName = 'name';
-        }
-        $records = $users->orderBy($columnName, $columnSortOrder)
-            ->where(function ($query) use ($searchValue) {
-                $query->where('name', 'like', '%' . $searchValue . '%');
-                $query->orWhere('email', 'like', '%' . $searchValue . '%');
-                $query->orWhere('position', 'like', '%' . $searchValue . '%');
-                $query->orWhere('phone_number', 'like', '%' . $searchValue . '%');
-                $query->orWhere('status', 'like', '%' . $searchValue . '%');
-            })
-            ->skip($start)
-            ->take($rowPerPage)
-            ->get();
-        $data_arr = [];
-        
-        foreach ($records as $key => $record) {
-            $modify = '
-                <td class="text-right">
-                    <div class="dropdown dropdown-action">
-                        <a href="" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-ellipsis-v ellipse_color"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="'.url('users/add/edit/'.$record->user_id).'">
-                                <i class="fas fa-pencil-alt m-r-5"></i> Edit
-                            </a>
-                            <a class="dropdown-item" href="'.url('users/delete/'.$record->id).'">
-                            <i class="fas fa-trash-alt m-r-5"></i> Delete
-                        </a>
-                        </div>
-                    </div>
-                </td>
-            ';
-            $data_arr [] = [
-                "user_id"      => $record->user_id,
-                "name"         => $record->name,
-                "email"        => $record->email,
-                "position"     => $record->position,
-                "phone_number" => $record->phone_number,
-                "status"       => $record->status, 
-                "modify"       => $modify, 
-            ];
-        }
-
-        
-
-        $response = [
-            "draw"                 => intval($draw),
-            "iTotalRecords"        => $totalRecords,
-            "iTotalDisplayRecords" => $totalRecordsWithFilter,
-            "aaData"               => $data_arr
-        ];
-        return response()->json($response);
-    }
+    // ... keep the rest of your controller methods the same ...
 }

@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -24,11 +26,13 @@ class User extends Authenticatable
         'join_date',
         'phone_number',
         'status',
-        'role_name',
-        'avatar',
-        'position',
-        'department',
+        'role',
         'password',
+        'image',
+        'gender',
+        'age',
+        'address',
+        'deleted_by',
     ];
 
     /**
@@ -48,6 +52,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'deleted_at' => 'datetime',  // Soft delete column cast
     ];
 
     protected static function boot()
@@ -69,5 +74,8 @@ class User extends Authenticatable
             }
         });
     }
-
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 }

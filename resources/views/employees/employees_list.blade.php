@@ -1,213 +1,140 @@
 @extends('layouts.master')
+
 @section('content')
-    {{-- message --}}
     {!! Toastr::message() !!}
     <div class="page-wrapper">
         <div class="content container-fluid">
+
+            {{-- Page Header --}}
             <div class="page-header">
                 <div class="row align-items-center">
                     <div class="col">
-                        <div class="mt-5">
-                            <h4 class="card-title float-left mt-2">Employee</h4>
-                            <a href="{{ route('form/employee/add') }}" class="btn btn-primary float-right veiwbutton">Add
-                                Employee</a>
+                        <div class="mt-5 d-flex justify-content-between align-items-center">
+                            <h4 class="card-title">Employees</h4>
+                            <a href="{{ route('form.employee.add') }}" class="btn btn-primary">Add Employee</a>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {{-- Search Form --}}
             <div class="row">
                 <div class="col-lg-12">
-                    <form>
+                    <form action="{{ route('form.employee.list') }}" method="GET">
                         <div class="row formtype">
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Employee ID</label>
-                                    <input type="text" class="form-control" id="usr">
+                                    <label for="employee_name">Employee Name</label>
+                                    <input type="text" name="employee_name" id="employee_name" class="form-control"
+                                        value="{{ request('employee_name') }}" placeholder="First or Last Name">
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Employee Name</label>
-                                    <input type="text" class="form-control" id="usr1">
+                                    <label for="position">Position</label>
+                                    <input type="text" name="role" id="position" class="form-control"
+                                        value="{{ request('role') }}">
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Role</label>
-                                    <select class="form-control" id="sel1" name="sellist1">
-                                        <option>Admin</option>
-                                        <option>Manager</option>
-                                        <option>Staff</option>
-                                        <option>Accountant</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Search</label>
-                                    <a href="#" class="btn btn-success btn-block mt-0 search_button"> Search </a>
-
-                                </div>
+                            <div class="col-md-12 mt-2">
+                                <button type="submit" class="btn btn-success">Search</button>
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <div class="row">
+
+            {{-- Employee Table --}}
+            <div class="row mt-4">
                 <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-body">
+                    <div class="card card-table">
+                        <div class="card-body booking_card">
                             <div class="table-responsive">
-                                <table class="datatable table table-stripped">
+                                <table class="datatable table table-hover table-center mb-0">
                                     <thead>
                                         <tr>
-                                            <th>Name</th>
-                                            <th>Employee ID</th>
+                                            <th>Employee</th>
+                                            <th>National ID</th>
                                             <th>Email</th>
-                                            <th>Mobile</th>
-                                            <th>Join Date</th>
-                                            <th>role</th>
+                                            <th>Phone</th>
+                                            <th>Position</th>
+                                            <th>Joining Date</th>
+                                            <th>Status</th>
                                             <th class="text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Albina Simonis</td>
-                                            <td>Ma-0001</td>
-                                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                                                    data-cfemail="b7d6dbd5ded9d6c4dedad8d9dec4f7d2cfd6dac7dbd299d4d8da">[email&#160;protected]</a>
-                                            </td>
-                                            <td>828-634-2744</td>
-                                            <td>7 May 2015</td>
-                                            <td>
-                                                <span class="custom-badge status-green">Manager</span>
-                                            </td>
-                                            <td class="text-right">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle"
-                                                        data-toggle="dropdown" aria-expanded="false"><i
-                                                            class="fas fa-ellipsis-v ellipse_color"></i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item" href="edit-employee.html"><i
-                                                                class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_asset"><i
-                                                                class="fas fa-trash-alt m-r-5"></i> Delete</a>
+                                        @forelse ($employees as $employee)
+                                            <tr>
+                                                <td>
+                                                    <h2 class="table-avatar">
+                                                        <a href="#" class="avatar avatar-sm mr-2">
+                                                            <img class="avatar-img rounded-circle"
+                                                                src="{{ $employee->photo ? asset('assets/upload/' . $employee->photo) : asset('images/default-user.png') }}"
+                                                                alt="Employee Photo">
+                                                        </a>
+                                                        <a href="#">{{ $employee->first_name }}
+                                                            {{ $employee->last_name }}</a>
+                                                    </h2>
+                                                </td>
+                                                <td>{{ $employee->national_id }}</td>
+                                                <td>{{ $employee->email }}</td>
+                                                <td>{{ $employee->phone }}</td>
+                                                <td>{{ $employee->position }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($employee->joining_date)->format('d M Y') }}
+                                                </td>
+                                                <td>
+                                                    <div class="actions">
+                                                        @if ($employee->status == 'active')
+                                                            <a href="#"
+                                                                class="btn btn-sm bg-success-light mr-2">Active</a>
+                                                        @elseif ($employee->status == 'inactive')
+                                                            <a href="#"
+                                                                class="btn btn-sm bg-danger-light mr-2">Inactive</a>
+                                                        @elseif ($employee->status == 'terminated')
+                                                            <a href="#"
+                                                                class="btn btn-sm bg-warning-light mr-2">Terminated</a>
+                                                        @else
+                                                            <a href="#"
+                                                                class="btn btn-sm bg-secondary-light mr-2">{{ ucfirst($employee->status) }}</a>
+                                                        @endif
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Cristina Groves</td>
-                                            <td>SF-0001</td>
-                                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                                                    data-cfemail="680b1a011b1c0106090f1a071e0d1b280d10090518040d460b0705">[email&#160;protected]</a>
-                                            </td>
-                                            <td>928-344-5176</td>
-                                            <td>1 Jan 2013</td>
-                                            <td>Staff</td>
-                                            <td class="text-right">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle"
-                                                        data-toggle="dropdown" aria-expanded="false"><i
-                                                            class="fas fa-ellipsis-v ellipse_color"></i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item" href="edit-employee.html"><i
-                                                                class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_asset"><i
-                                                                class="fas fa-trash-alt m-r-5"></i> Delete</a>
+                                                </td>
+                                                <td class="text-right">
+                                                    <div class="dropdown dropdown-action">
+                                                        <a href="#" class="action-icon dropdown-toggle"
+                                                            data-toggle="dropdown" aria-expanded="false">
+                                                            <i class="fas fa-ellipsis-v ellipse_color"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a href="{{ route('form.employee.edit', $employee->id) }}"
+                                                                class="dropdown-item">
+                                                                <i class="fas fa-pencil-alt m-r-5"></i> Edit
+                                                            </a>
+                                                            <form
+                                                                action="{{ route('form.employee.delete', $employee->id) }}"
+                                                                method="POST"
+                                                                onsubmit="return confirm('Are you sure want to delete this employee?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="dropdown-item text-danger">
+                                                                    <i class="fas fa-trash-alt m-r-5"></i> Delete
+                                                                </button>
+                                                            </form>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Mary Mericle</td>
-                                            <td>SF-0003</td>
-                                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                                                    data-cfemail="4825293a31252d3a212b242d082d30292538242d662b2725">[email&#160;protected]</a>
-                                            </td>
-                                            <td>603-831-4983</td>
-                                            <td>27 Dec 2017</td>
-                                            <td>Accountant</td>
-                                            <td class="text-right">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle"
-                                                        data-toggle="dropdown" aria-expanded="false"><i
-                                                            class="fas fa-ellipsis-v ellipse_color"></i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item" href="edit-employee.html"><i
-                                                                class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_asset"><i
-                                                                class="fas fa-trash-alt m-r-5"></i> Delete</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Haylie Feeney</td>
-                                            <td>SF-0002</td>
-                                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                                                    data-cfemail="4f272e3623262a292a2a212a360f2a372e223f232a612c2022">[email&#160;protected]</a>
-                                            </td>
-                                            <td>616-774-4962</td>
-                                            <td>21 Apr 2017</td>
-                                            <td>Room Maintainers</td>
-                                            <td class="text-right">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle"
-                                                        data-toggle="dropdown" aria-expanded="false"><i
-                                                            class="fas fa-ellipsis-v ellipse_color"></i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item" href="edit-employee.html"><i
-                                                                class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_asset"><i
-                                                                class="fas fa-trash-alt m-r-5"></i> Delete</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Zoe Butler</td>
-                                            <td>SF-0001</td>
-                                            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
-                                                    data-cfemail="5e24313b3c2b2a323b2c1e3b263f332e323b703d3133">[email&#160;protected]</a>
-                                            </td>
-                                            <td>444-555-9999</td>
-                                            <td>19 May 2012</td>
-                                            <td>Receptionist</td>
-                                            <td class="text-right">
-                                                <div class="dropdown dropdown-action">
-                                                    <a href="#" class="action-icon dropdown-toggle"
-                                                        data-toggle="dropdown" aria-expanded="false"><i
-                                                            class="fas fa-ellipsis-v ellipse_color"></i></a>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        <a class="dropdown-item" href="edit-employee.html"><i
-                                                                class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-                                                        <a class="dropdown-item" href="#" data-toggle="modal"
-                                                            data-target="#delete_asset"><i
-                                                                class="fas fa-trash-alt m-r-5"></i> Delete</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="8" class="text-center">No employees found.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="delete_asset" class="modal fade delete-modal" role="dialog">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-body text-center">
-                            <img src="assets/img/sent.png" alt="" width="50" height="46">
-                            <h3 class="delete_class">Are you sure want to delete this Asset?</h3>
-                            <div class="m-t-20"> <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                                <button type="submit" class="btn btn-danger">Delete</button>
+                            <div class="mt-3">
+                                {{ $employees->appends(request()->input())->links() }}
                             </div>
                         </div>
                     </div>

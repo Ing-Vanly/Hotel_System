@@ -1,149 +1,176 @@
 @extends('layouts.master')
 @section('content')
-    <style>
-        .avatar {
-            background-color: #aaa;
-            border-radius: 50%;
-            color: #fff;
-            display: inline-block;
-            font-weight: 500;
-            height: 38px;
-            line-height: 38px;
-            margin: -38px 10px 0 0;
-            text-align: center;
-            text-decoration: none;
-            text-transform: uppercase;
-            vertical-align: middle;
-            width: 38px;
-            position: relative;
-            white-space: nowrap;
-            z-index: 2;
-        }
-    </style>
     {{-- message --}}
     {!! Toastr::message() !!}
     <div class="page-wrapper">
         <div class="content container-fluid">
+
+            {{-- Page Header --}}
             <div class="page-header">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h3 class="page-title mt-5">Edit Customer</h3> </div>
+                        <h3 class="page-title mt-5">Edit Customer</h3>
+                    </div>
                 </div>
             </div>
-            <form action="{{ route('form/customer/update') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="row formtype">
+
+            {{-- Main Card --}}
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Update Customer Information</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('form/customer/update') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+
+                        {{-- Section: Basic Info --}}
+                        <h5 class="mb-3 mt-2">Basic Information</h5>
+                        <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Customer ID</label>
-                                    <input class="form-control" type="text" name="bkg_customer_id" value="{{ $customerEdit->bkg_customer_id }}" readonly>
+                                    <input type="text" class="form-control" name="bkg_customer_id"
+                                        value="{{ $customerEdit->bkg_customer_id }}" readonly>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Name</label>
-                                    <input class="form-control" type="text" name="name" value="{{ $customerEdit->name }}">
+                                    <input type="text" class="form-control" name="name"
+                                        value="{{ $customerEdit->name }}">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Room Type</label>
-                                    <select class="form-control" id="sel2" name="room_type">
-                                        <option selected value="{{ $customerEdit->room_type }}">{{ $customerEdit->room_type }}</option>
-                                        <option value="Single">Single</option>
-                                        <option value="Double">Double</option>
-                                        <option value="Quad">Quad</option>
-                                        <option value="King">King</option>
-                                        <option value="Suite">Suite</option>
-                                        <option value="Villa">Villa</option>
-                                    </select>
+                                    <label>Date of Birth</label>
+                                    <input type="date" class="form-control" name="dob"
+                                        value="{{ $customerEdit->dob }}">
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Total Members</label>
-                                    <input class="form-control" type="number" name="total_numbers" value="{{ $customerEdit->total_numbers }}">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Date</label>
-                                    <div class="cal-icon">
-                                        <input type="text" class="form-control datetimepicker" name="date" value="{{ $customerEdit->date }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Time</label>
-                                    <div class="time-icon">
-                                        <input type="text" class="form-control" id="datetimepicker3" name="time" value="{{ $customerEdit->time }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Arrival Date</label>
-                                    <div class="cal-icon">
-                                        <input type="text" class="form-control datetimepicker" name="arrival_date" value="{{ $customerEdit->arrival_date }}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>Depature Date</label>
-                                    <div class="cal-icon">
-                                        <input type="text" class="form-control datetimepicker" name="depature_date" value="{{ $customerEdit->depature_date }}">
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+
+                        {{-- Section: Contact Info --}}
+                        <h5 class="mb-3 mt-4">Contact Information</h5>
+                        <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Email</label>
-                                    <input type="text" class="form-control" id="email" name="email" value="{{ $customerEdit->email }}">
+                                    <input type="text" class="form-control" name="email"
+                                        value="{{ $customerEdit->email }}">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Phone Number</label>
-                                    <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ $customerEdit->ph_number }}">
+                                    <input type="text" class="form-control" name="phone_number"
+                                        value="{{ $customerEdit->ph_number }}">
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>File Upload</label>
-                                    <div class="custom-file mb-3">
-                                        <input type="file" class="custom-file-input" id="customFile" name="fileupload">
-                                        <input type="hidden" class="form-control" name="hidden_fileupload" value="{{ $customerEdit->fileupload }}">
-                                        <a href="profile.html" class="avatar avatar-sm mr-2">
-                                            <img class="avatar-img rounded-circle" src="{{ URL::to('/assets/upload/'.$customerEdit->fileupload) }}" alt="{{ $customerEdit->fileupload }}">
-                                        </a>
-                                        <label class="custom-file-label" for="customFile">Choose file</label>
+                                    <label>Country</label>
+                                    <input type="text" class="form-control" name="country"
+                                        value="{{ $customerEdit->country }}" placeholder="Enter country">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Section: Identification --}}
+                        <h5 class="mb-3 mt-4">Identification</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Gender</label>
+                                    <select class="form-control" name="gender">
+                                        <option value="Male" {{ $customerEdit->gender == 'Male' ? 'selected' : '' }}>Male
+                                        </option>
+                                        <option value="Female" {{ $customerEdit->gender == 'Female' ? 'selected' : '' }}>
+                                            Female</option>
+                                        <option value="Other" {{ $customerEdit->gender == 'Other' ? 'selected' : '' }}>
+                                            Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>National ID</label>
+                                    <input type="text" class="form-control" name="national_id"
+                                        value="{{ $customerEdit->national_id }}"
+                                        placeholder="Enter National ID or Passport Number">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <div class="input-group" style="margin-top: -10px">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-bell"></i></span>
+                                        </div>
+                                        <select name="status" class="form-control" required>
+                                            <option value="1" {{ $customerEdit->status == 1 ? 'selected' : '' }}>
+                                                Active</option>
+                                            <option value="0" {{ $customerEdit->status == 0 ? 'selected' : '' }}>
+                                                Inactive</option>
+                                        </select>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Section: Address --}}
+                        <h5 class="mb-3 mt-4">Address & Notes</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <textarea class="form-control" name="address" rows="2" placeholder="Enter customer address">{{ $customerEdit->address }}</textarea>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Message</label>
-                                    <textarea class="form-control" rows="1.5" id="message" name="message">{{ $customerEdit->message }}</textarea>
+                                    <textarea class="form-control" name="message" rows="2">{{ $customerEdit->message }}</textarea>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        {{-- Section: Profile Image --}}
+                        <h5 class="mb-3 mt-4">Profile Image</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>File Upload</label>
+                                    <div class="custom-file mb-3">
+                                        <input type="file" class="custom-file-input" id="customFile" name="fileupload"
+                                            onchange="updateFileName(this)">
+                                        <input type="hidden" name="hidden_fileupload"
+                                            value="{{ $customerEdit->fileupload }}">
+                                        <label class="custom-file-label" for="customFile" id="customFileLabel">
+                                            {{ $customerEdit->fileupload ?? 'Choose file' }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card shadow-sm border rounded p-2">
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ URL::to('/assets/upload/' . $customerEdit->fileupload) }}"
+                                            alt="Customer Image" class="rounded-circle mr-3"
+                                            style="width: 70px; height: 70px; object-fit: cover; border: 2px solid #ddd;">
+                                        <div>
+                                            <div class="font-weight-bold">{{ $customerEdit->fileupload }}</div>
+                                            <small class="text-muted">Current uploaded image</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Submit --}}
+                        <div class="text-right mt-4">
+                            <button type="submit" class="btn btn-primary">Update Customer</button>
+                        </div>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-primary buttonedit">Update</button>
-            </form>
+            </div>
+            {{-- End Card --}}
         </div>
     </div>
-    @section('script')
-    <script>
-        $(function() {
-            $('#datetimepicker3').datetimepicker({
-                format: 'LT'
-            });
-        });
-        </script>
-    @endsection
 @endsection

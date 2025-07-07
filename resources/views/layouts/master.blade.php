@@ -16,6 +16,8 @@
 	<link rel="stylesheet" href="{{ URL::to('assets/css/style.css') }}"> </head>
 	<link rel="stylesheet" type="text/css" href="{{ URL::to('assets/css/bootstrap-datetimepicker.min.css') }}">
 
+
+
 	{{-- message toastr --}}
 	<link rel="stylesheet" href="{{ URL::to('assets/css/toastr.min.css') }}">
 	<script src="{{ URL::to('assets/js/toastr_jquery.min.js') }}"></script>
@@ -95,7 +97,7 @@
 					</div>
 				</li>
 				<li class="nav-item dropdown has-arrow">
-					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"> <span class="user-img"><img class="rounded-circle" src="{{ URL::to('assets/img/profiles/') }}" width="31" alt="Soeng Souy"></span> </a>
+					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"> <span class="user-img"><img class="rounded-circle" src="{{ URL::to('assets/img/profiles/') }}" width="31" alt="Loy mg Vanly"></span> </a>
 					<div class="dropdown-menu">
 						<div class="user-header">
 							<div class="avatar avatar-sm"> <img src="{{ URL::to('assets/img/profiles/') }}" alt="User Image" class="avatar-img rounded-circle"> </div>
