@@ -42,12 +42,13 @@
                     <ul class="submenu_class" style="display: none;">
                         <li><a class="{{ set_active(['form/employee/list']) }}"
                                 href="{{ route('form.employee.list') }}">All Employees</a></li>
-                        <li><a class="{{ set_active(['form.employee.edit']) }}"
-                                href="">Edit Employees </a></li>
+                        <li><a class="{{ set_active(['form.employee.edit']) }}" href="">Edit Employees </a></li>
                         <li><a class="{{ set_active(['form/employee/add']) }}"
                                 href="{{ route('form.employee.add') }}">Add Employees</a></li>
+                        <li><a class="{{ set_active(['leavetype.index']) }}"
+                                href="{{ route('leavetype.index') }}">Type of Leaves</a></li>
+
                         <li><a class="{{ set_active(['form/leaves/page']) }}" href="">Leaves </a></li>
-                        <li><a class="{{ set_active(['form/leaves/page']) }}" href="">Type of Leaves </a></li>
                         <li><a href="attendance.html">Attendance </a></li>
                     </ul>
                 </li>

@@ -10,6 +10,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ResetPasswordController;
@@ -147,16 +148,6 @@ Route::controller(UserManagementController::class)->group(function () {
     Route::get('get-roles', 'getRoles')->name('get-roles');
 });
 
-//employee management
-// Route::controller(EmployeeController::class)->middleware('auth')->group(function () {
-//     Route::get('form/employee/list', 'employeesList')->name('form.employee.list');
-//     Route::get('form/employee/add', 'employeesAdd')->name('form.employee.add');
-//     Route::post('form/employee/save', 'saveEmployee')->name('form.employee.save');
-//     Route::get('form/employee/edit/{id}', 'editEmployee')->name('form.employee.edit');
-//     Route::post('form/employee/update/{id}', 'updateEmployee')->name('form.employee.update');
-//     Route::post('form/employee/delete', 'deleteEmployee')->name('form.employee.delete');
-//     // Route::get('form/leaves/page', 'leavesPage')->name('form.leaves.page');
-// });
 
 Route::controller(EmployeeController::class)->middleware('auth')->group(function () {
     Route::get('form/employee/list', 'employeesList')->name('form.employee.list');
@@ -167,6 +158,16 @@ Route::controller(EmployeeController::class)->middleware('auth')->group(function
     Route::delete('form/employee/delete/{id}', 'deleteEmployee')->name('form.employee.delete');
 });
 
-
 //role management
 Route::resource('role', RoleController::class)->middleware('auth');
+
+//leavetype
+Route::get('/leavetype', [LeaveTypeController::class, 'index'])->name('leavetype.index');
+Route::get('/leavetype/create', [LeaveTypeController::class, 'create'])->name('leavetype.create');
+Route::post('/leavetype', [LeaveTypeController::class, 'store'])->name('leavetype.store');
+Route::get('/leavetype/{id}/edit', [LeaveTypeController::class, 'edit'])->name('leavetype.edit');
+Route::put('/leavetype/{id}', [LeaveTypeController::class, 'update'])->name('leavetype.update');
+Route::delete('/leavetype/{id}', [LeaveTypeController::class, 'destroy'])->name('leavetype.destroy');
+
+//leave
+
