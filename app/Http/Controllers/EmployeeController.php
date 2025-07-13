@@ -20,7 +20,7 @@ class EmployeeController extends Controller
         if ($request->filled('employee_name')) {
             $query->where(function ($q) use ($request) {
                 $q->where('first_name', 'like', '%' . $request->employee_name . '%')
-                  ->orWhere('last_name', 'like', '%' . $request->employee_name . '%');
+                    ->orWhere('last_name', 'like', '%' . $request->employee_name . '%');
             });
         }
         if ($request->filled('role')) {

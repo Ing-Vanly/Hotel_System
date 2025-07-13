@@ -12,7 +12,7 @@ class CustomerController extends Controller
     // view page all customer
     public function allCustomers()
     {
-        $allCustomers = DB::table('customers')->get();
+        $allCustomers = DB::table('customers')->paginate(10);
         return view('formcustomers.allcustomers', compact('allCustomers'));
     }
 

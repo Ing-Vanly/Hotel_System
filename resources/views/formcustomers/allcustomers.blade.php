@@ -1,4 +1,5 @@
 @extends('layouts.master')
+
 @section('content')
     {!! Toastr::message() !!}
     <div class="page-wrapper">
@@ -6,20 +7,21 @@
             <div class="page-header">
                 <div class="row align-items-center">
                     <div class="col">
-                        <div class="mt-5">
-                            <h4 class="card-title float-left mt-2">Customers</h4> <a
-                                href="{{ route('form/addcustomer/page') }}" class="btn btn-primary float-right veiwbutton">Add
-                                Customers</a>
+                        <div class="mt-5 d-flex justify-content-between align-items-center">
+                            <h4 class="card-title">Customers</h4>
+                            <a href="{{ route('form/addcustomer/page') }}" class="btn btn-primary">Add Customers</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
+
+            {{-- Customer Table --}}
+            <div class="row mt-4">
                 <div class="col-sm-12">
                     <div class="card card-table">
                         <div class="card-body booking_card">
                             <div class="table-responsive">
-                                <table class="datatable table table-stripped table table-hover table-center mb-0">
+                                <table class="table table-hover table-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>Booking ID</th>
@@ -40,45 +42,36 @@
                                             <tr>
                                                 <td hidden class="id">{{ $customers->id }}</td>
                                                 <td hidden class="fileupload">{{ $customers->fileupload }}</td>
-
-                                                <td hidden class="bkg_customer_id">{{ $customers->bkg_customer_id }}</td>
-                                                <td hidden class="fileupload">{{ $customers->fileupload }}</td>
                                                 <td>{{ $customers->bkg_customer_id }}</td>
                                                 <td>{{ $customers->national_id }}</td>
                                                 <td>
                                                     <h2 class="table-avatar">
-                                                        <a href="profile.html" class="avatar avatar-sm mr-2">
+                                                        <a href="#" class="avatar avatar-sm mr-2">
                                                             <img class="avatar-img rounded-circle"
                                                                 src="{{ URL::to('/assets/upload/' . $customers->fileupload) }}"
                                                                 alt="{{ $customers->fileupload }}">
                                                         </a>
-                                                        <a
-                                                            href="profile.html">{{ $customers->name }}<span>{{ $customers->bkg_customer_id }}</span></a>
+                                                        <a href="#">{{ $customers->name }}
+                                                            <span>{{ $customers->bkg_customer_id }}</span></a>
                                                     </h2>
                                                 </td>
                                                 <td>{{ $customers->gender }}</td>
                                                 <td>{{ $customers->dob }}</td>
-                                                <td><a href="#" class="__cf_email__"
-                                                        data-cfemail="2652494b4b5f44435448474a66435e474b564a430845494b">{{ $customers->email }}</a>
-                                                </td>
+                                                <td>{{ $customers->email }}</td>
                                                 <td>{{ $customers->ph_number }}</td>
                                                 <td>{{ $customers->address }}</td>
                                                 <td>{{ $customers->country }}</td>
                                                 <td>
-                                                    <div class="actions">
-                                                        @if ($customers->status)
-                                                            <a href="#"
-                                                                class="btn btn-sm bg-success-light mr-2">Active</a>
-                                                        @else
-                                                            <a href="#"
-                                                                class="btn btn-sm bg-danger-light mr-2">Inactive</a>
-                                                        @endif
-                                                    </div>
+                                                    @if ($customers->status)
+                                                        <a href="#" class="btn btn-sm bg-success-light">Active</a>
+                                                    @else
+                                                        <a href="#" class="btn btn-sm bg-danger-light">Inactive</a>
+                                                    @endif
                                                 </td>
                                                 <td class="text-right">
                                                     <div class="dropdown dropdown-action">
                                                         <a href="#" class="action-icon dropdown-toggle"
-                                                            data-toggle="dropdown" aria-expanded="false">
+                                                            data-toggle="dropdown">
                                                             <i class="fas fa-ellipsis-v ellipse_color"></i>
                                                         </a>
                                                         <div class="dropdown-menu dropdown-menu-right">
@@ -95,13 +88,21 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                    </tbody>
                                 </table>
+
+                                {{-- Pagination --}}
+                                <div class="mt-3">
+                                    {{ $allCustomers->appends(request()->input())->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        {{-- Delete Modal --}}
         <div id="delete_asset" class="modal fade delete-modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -112,7 +113,8 @@
                             <h3 class="delete_class">Are you sure want to delete this Asset?</h3>
                             <div class="m-t-20">
                                 <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                                <input class="form-control" type="hidden" id="e_id" name="id" value="{{ $customers->bkg_customer_id }}">
+                                <input class="form-control" type="hidden" id="e_id" name="id"
+                                    value="{{ $customers->bkg_customer_id }}">
                                 <input class="form-control" type="hidden" id="e_fileupload" name="fileupload"
                                     value="">
                                 <button type="submit" class="btn btn-danger">Delete</button>
@@ -122,15 +124,15 @@
                 </div>
             </div>
         </div>
+
         @push('js')
             <script>
-                // Handle Delete Modal
                 $(document).on('click', '.customerDelete', function() {
                     var _this = $(this).closest('tr');
-                    // Set bkg_customer_id instead of id
                     $('#e_id').val(_this.find('.bkg_customer_id').text().trim());
                     $('#e_fileupload').val(_this.find('.fileupload').text().trim());
                 });
             </script>
         @endpush
-    @endsection
+    </div>
+@endsection
