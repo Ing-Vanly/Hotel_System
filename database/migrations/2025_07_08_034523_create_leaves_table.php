@@ -18,7 +18,7 @@
         $table->date('start_date');
         $table->date('end_date');
         $table->text('reason')->nullable();
-        $table->enum('status', ['pending', 'approved', 'cancelled'])->default('pending');
+        $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
         $table->timestamps();
     });
 }

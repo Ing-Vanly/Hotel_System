@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\LeaveController;
 
 /*
 |--------------------------------------------------------------------------
@@ -170,4 +171,27 @@ Route::put('/leavetype/{id}', [LeaveTypeController::class, 'update'])->name('lea
 Route::delete('/leavetype/{id}', [LeaveTypeController::class, 'destroy'])->name('leavetype.destroy');
 
 //leave
+
+Route::resource('leave', LeaveController::class)->middleware('auth');
+Route::get('/leave/{leave}/approve', [LeaveController::class, 'approve'])->name('leave.approve')->middleware('auth');
+Route::get('/leave/{leave}/cancel', [LeaveController::class, 'cancel'])->name('leave.cancel')->middleware('auth');
+
+// Debug route - remove this after fixing the issue
+Route::get('/debug-employees', function() {
+    $employees = \App\Models\Employee::all();
+    echo "<h3>All Employees in Database:</h3>";
+    foreach($employees as $employee) {
+        echo "<p>ID: {$employee->id} | Name: {$employee->first_name} {$employee->last_name} | Status: {$employee->status} | Position: {$employee->position}</p>";
+    }
+    
+    echo "<h3>Active Employees:</h3>";
+    $activeEmployees = \App\Models\Employee::where('status', 'active')->get();
+    foreach($activeEmployees as $employee) {
+        echo "<p>ID: {$employee->id} | Name: {$employee->first_name} {$employee->last_name} | Status: {$employee->status} | Position: {$employee->position}</p>";
+    }
+    
+    if($employees->count() == 0) {
+        echo "<p><strong>NO EMPLOYEES FOUND IN DATABASE!</strong></p>";
+    }
+})->middleware('auth');
 

@@ -48,7 +48,7 @@
                         <li><a class="{{ set_active(['leavetype.index']) }}"
                                 href="{{ route('leavetype.index') }}">Type of Leaves</a></li>
 
-                        <li><a class="{{ set_active(['form/leaves/page']) }}" href="">Leaves </a></li>
+                        <li><a class="{{ set_active(['form/leaves/page']) }}" href="{{route('leave.index')}}">Leaves </a></li>
                         <li><a href="attendance.html">Attendance </a></li>
                     </ul>
                 </li>

@@ -24,4 +24,26 @@ class Employee extends Model
         'photo',
         'status',
     ];
+
+    protected $casts = [
+        'dob' => 'date',
+        'joining_date' => 'date',
+        'salary' => 'decimal:2',
+    ];
+
+    /**
+     * Get all leaves for this employee
+     */
+    public function leaves()
+    {
+        return $this->hasMany(Leave::class);
+    }
+
+    /**
+     * Get full name attribute
+     */
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
 }
