@@ -5,15 +5,36 @@
                 <li class="{{ set_active(['home']) }}"> <a href="{{ route('home') }}"><i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span></a> </li>
                 <li class="list-divider"></li>
-                <li class="submenu"> <a href="#"><i class="fas fa-suitcase"></i> <span> Booking </span> <span
+                <li class="submenu"> <a href="#"><i class="fas fa-calendar-check"></i> <span> Reservations </span> <span
                             class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
-                        <li><a class="{{ set_active(['form/allbooking']) }}" href="{{ route('form/allbooking') }}"> All
-                                Booking </a></li>
-                        <li><a class="{{ request()->is('form/booking/edit/*') ? 'active' : '' }}"> Edit Booking </a>
-                        </li>
-                        <li><a class="{{ set_active(['form/booking/add']) }}" href="{{ route('form/booking/add') }}">
-                                Add Booking </a></li>
+                        <li><a class="{{ set_active(['reservations/all']) }}" href="{{ route('form/allbooking') }}"> All Reservations </a></li>
+                        <li><a class="{{ set_active(['reservations/new']) }}" href="{{ route('form/booking/add') }}"> New Reservation </a></li>
+                        <li><a href="#"> Today's Arrivals </a></li>
+                        <li><a href="#"> Today's Departures </a></li>
+                        <li><a href="#"> Reservation Calendar </a></li>
+                    </ul>
+                </li>
+                <li class="submenu"> <a href="#"><i class="fas fa-concierge-bell"></i> <span> Front Desk </span> <span
+                            class="menu-arrow"></span></a>
+                    <ul class="submenu_class" style="display: none;">
+                        <li><a href="#"> Check-in </a></li>
+                        <li><a href="#"> Check-out </a></li>
+                        <li><a href="#"> In-House Guests </a></li>
+                        <li><a href="#"> Walk-in Booking </a></li>
+                        <li><a href="#"> Room Assignment </a></li>
+                        <li><a href="#"> Guest Folio </a></li>
+                        <li><a href="#"> Night Audit </a></li>
+                    </ul>
+                </li>
+                <li class="submenu"> <a href="#"><i class="fas fa-broom"></i> <span> Housekeeping </span> <span
+                            class="menu-arrow"></span></a>
+                    <ul class="submenu_class" style="display: none;">
+                        <li><a href="#"> Room Status </a></li>
+                        <li><a href="#"> Cleaning Schedule </a></li>
+                        <li><a href="#"> Maintenance Requests </a></li>
+                        <li><a href="#"> Housekeeping Reports </a></li>
+                        <li><a href="#"> Lost & Found </a></li>
                     </ul>
                 </li>
                 <li class="submenu"> <a href="#"><i class="fas fa-user"></i> <span> Customers </span> <span
@@ -35,6 +56,8 @@
                         <li><a class="{{ request()->is('form/room/edit/*') ? 'active' : '' }}"> Edit Rooms </a></li>
                         <li><a class="{{ set_active(['form/addroom/page']) }}"
                                 href="{{ route('form/addroom/page') }}"> Add Rooms </a></li>
+                        <li><a class="{{ set_active(['form/addroom/page']) }}"
+                                href="{{ route('roomtype.index') }}">Room Type </a></li>
                     </ul>
                 </li>
                 <li class="submenu"> <a href="#"><i class="fas fa-user"></i> <span> Employees </span> <span
@@ -52,14 +75,27 @@
                         <li><a href="attendance.html">Attendance </a></li>
                     </ul>
                 </li>
-                <li class="submenu"> <a href="#"><i class="far fa-money-bill-alt"></i> <span> Accounts </span>
+                <li class="submenu"> <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Billing & Invoices </span>
                         <span class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
-                        <li><a href="invoices.html">Invoices </a></li>
-                        <li><a href="payments.html">Payments </a></li>
-                        <li><a href="expenses.html">Expenses </a></li>
-                        <li><a href="taxes.html">Taxes </a></li>
-                        <li><a href="provident-fund.html">Provident Fund </a></li>
+                        <li><a href="#"> Guest Invoices </a></li>
+                        <li><a href="#"> Payment Processing </a></li>
+                        <li><a href="#"> Folio Management </a></li>
+                        <li><a href="#"> Refunds </a></li>
+                        <li><a href="#"> Tax Reports </a></li>
+                        <li><a href="#"> Payment Methods </a></li>
+                    </ul>
+                </li>
+                <li class="submenu"> <a href="#"><i class="fas fa-chart-bar"></i> <span> Reports </span>
+                        <span class="menu-arrow"></span></a>
+                    <ul class="submenu_class" style="display: none;">
+                        <li><a href="#"> Occupancy Report </a></li>
+                        <li><a href="#"> Revenue Report </a></li>
+                        <li><a href="#"> Guest History </a></li>
+                        <li><a href="#"> Room Revenue </a></li>
+                        <li><a href="#"> Daily Sales </a></li>
+                        <li><a href="#"> Monthly Statistics </a></li>
+                        <li><a href="#"> Guest Feedback </a></li>
                     </ul>
                 </li>
                 <li class="submenu"> <a href="#"><i class="fas fa-book"></i> <span> Payroll </span> <span

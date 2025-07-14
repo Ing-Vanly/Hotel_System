@@ -9,7 +9,7 @@
                     <div class="col">
                         <div class="mt-5">
                             <h4 class="card-title float-left mt-2">All Rooms</h4>
-                            <a href="{{ route('form/addroom/page') }}" class="btn btn-primary float-right veiwbutton">Add Room</a> 
+                            <a href="{{ route('form/addroom/page') }}" class="btn btn-primary float-right veiwbutton">Add Room</a>
                         </div>
                     </div>
                 </div>
@@ -53,8 +53,16 @@
                                             <td>{{ $rooms->ac_non_ac }}</td>
                                             <td>{{ $rooms->food }}</td>
                                             <td>{{ $rooms->bed_count }}</td>
-                                            <td>{{ $rooms->charges_for_cancellation }}</td>
-                                            <td>{{ $rooms->rent }}</td>
+                                            <td>
+                                                @if($rooms->charges_for_cancellation == 0)
+                                                    Free
+                                                @elseif($rooms->charges_for_cancellation == -1)
+                                                    No Cancellation
+                                                @else
+                                                    {{ $rooms->charges_for_cancellation }}%
+                                                @endif
+                                            </td>
+                                            <td>${{ number_format($rooms->rent, 2) }}</td>
                                             <td>{{ $rooms->phone_number }}</td>
                                             <td>
                                                 <div class="actions"> <a href="#" class="btn btn-sm bg-success-light mr-2">Active</a> </div>
@@ -70,7 +78,7 @@
                                                         </a>
                                                         <a class="dropdown-item delete_asset" href="#" data-toggle="modal" data-target="#delete_asset">
                                                             <i class="fas fa-trash-alt m-r-5"></i> Delete
-                                                        </a> 
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -84,7 +92,7 @@
                 </div>
             </div>
         </div>
-        
+
         {{-- delete model --}}
         <div id="delete_asset" class="modal fade delete-modal" role="dialog">
             <div class="modal-dialog modal-dialog-centered">

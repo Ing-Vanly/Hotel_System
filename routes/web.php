@@ -17,6 +17,9 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\RoomTypeController;
+use App\Http\Controllers\FrontDeskController;
+use App\Http\Controllers\HousekeepingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -122,6 +125,17 @@ Route::controller(RoomsController::class)->group(function () {
     Route::post('form/room/update', 'updateRecord')->middleware('auth')->name('form/room/update');
 });
 
+//room types
+Route::controller(RoomTypeController::class)->middleware('auth')->group(function () {
+    Route::get('form/roomtype/list', 'index')->name('roomtype.index');
+    Route::get('form/roomtype/create', 'create')->name('roomtype.create');
+    Route::post('form/roomtype/store', 'store')->name('roomtype.store');
+    Route::get('form/roomtype/edit/{id}', 'edit')->name('roomtype.edit');
+    Route::put('form/roomtype/update/{id}', 'update')->name('roomtype.update');
+    Route::delete('form/roomtype/delete/{id}', 'destroy')->name('roomtype.destroy');
+    Route::post('form/roomtype/available-rooms', 'getAvailableRoomsForDates')->name('roomtype.available-rooms');
+});
+
 // // ----------------------- user management -------------------------//
 // Route::controller(UserManagementController::class)->group(function () {
 //     Route::get('users/list/page', 'userList')->middleware('auth')->name('users/list/page');
@@ -171,27 +185,34 @@ Route::put('/leavetype/{id}', [LeaveTypeController::class, 'update'])->name('lea
 Route::delete('/leavetype/{id}', [LeaveTypeController::class, 'destroy'])->name('leavetype.destroy');
 
 //leave
-
 Route::resource('leave', LeaveController::class)->middleware('auth');
 Route::get('/leave/{leave}/approve', [LeaveController::class, 'approve'])->name('leave.approve')->middleware('auth');
 Route::get('/leave/{leave}/cancel', [LeaveController::class, 'cancel'])->name('leave.cancel')->middleware('auth');
 
-// Debug route - remove this after fixing the issue
-Route::get('/debug-employees', function() {
-    $employees = \App\Models\Employee::all();
-    echo "<h3>All Employees in Database:</h3>";
-    foreach($employees as $employee) {
-        echo "<p>ID: {$employee->id} | Name: {$employee->first_name} {$employee->last_name} | Status: {$employee->status} | Position: {$employee->position}</p>";
-    }
-    
-    echo "<h3>Active Employees:</h3>";
-    $activeEmployees = \App\Models\Employee::where('status', 'active')->get();
-    foreach($activeEmployees as $employee) {
-        echo "<p>ID: {$employee->id} | Name: {$employee->first_name} {$employee->last_name} | Status: {$employee->status} | Position: {$employee->position}</p>";
-    }
-    
-    if($employees->count() == 0) {
-        echo "<p><strong>NO EMPLOYEES FOUND IN DATABASE!</strong></p>";
-    }
-})->middleware('auth');
+//front desk operations
+Route::controller(FrontDeskController::class)->middleware('auth')->group(function () {
+    Route::get('frontdesk/arrivals', 'todaysArrivals')->name('frontdesk.arrivals');
+    Route::get('frontdesk/departures', 'todaysDepartures')->name('frontdesk.departures');
+    Route::get('frontdesk/in-house', 'inHouseGuests')->name('frontdesk.in-house');
+    Route::get('frontdesk/checkin/{booking}', 'checkIn')->name('frontdesk.checkin');
+    Route::post('frontdesk/checkin/{booking}', 'processCheckIn')->name('frontdesk.process-checkin');
+    Route::get('frontdesk/checkout/{booking}', 'checkOut')->name('frontdesk.checkout');
+    Route::post('frontdesk/checkout/{booking}', 'processCheckOut')->name('frontdesk.process-checkout');
+    Route::get('frontdesk/walkin', 'walkInBooking')->name('frontdesk.walkin');
+    Route::get('frontdesk/room-assignment', 'roomAssignment')->name('frontdesk.room-assignment');
+    Route::get('frontdesk/folio/{booking}', 'guestFolio')->name('frontdesk.folio');
+    Route::get('frontdesk/night-audit', 'nightAudit')->name('frontdesk.night-audit');
+});
 
+//housekeeping operations
+Route::controller(HousekeepingController::class)->middleware('auth')->group(function () {
+    Route::get('housekeeping/room-status', 'roomStatus')->name('housekeeping.room-status');
+    Route::post('housekeeping/room-status/{room}', 'updateRoomStatus')->name('housekeeping.update-status');
+    Route::get('housekeeping/cleaning-schedule', 'cleaningSchedule')->name('housekeeping.cleaning-schedule');
+    Route::post('housekeeping/mark-cleaned/{room}', 'markAsCleaned')->name('housekeeping.mark-cleaned');
+    Route::get('housekeeping/maintenance-requests', 'maintenanceRequests')->name('housekeeping.maintenance-requests');
+    Route::post('housekeeping/maintenance-requests', 'createMaintenanceRequest')->name('housekeeping.create-maintenance');
+    Route::get('housekeeping/reports', 'housekeepingReports')->name('housekeeping.reports');
+    Route::get('housekeeping/lost-found', 'lostAndFound')->name('housekeeping.lost-found');
+    Route::post('housekeeping/lost-found', 'addLostFoundItem')->name('housekeeping.add-lost-found');
+});

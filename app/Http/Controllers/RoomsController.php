@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Room;
+use App\Models\RoomType;
 use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Support\Facades\Schema;
 use DB;
 
 class RoomsController extends Controller
@@ -12,69 +14,114 @@ class RoomsController extends Controller
     // index page
     public function allrooms()
     {
-        $allRooms = DB::table('rooms')->get();
+        // Use existing column until migration is run
+        $allRooms = Room::orderBy('name')->get();
         return view('room.allroom',compact('allRooms'));
     }
     // add room page
     public function addRoom()
     {
-        $data = DB::table('room_types')->get();
-        $user = DB::table('users')->get();
-        return view('room.addroom',compact('user','data'));
+        // Use existing room_types table structure
+        $roomTypes = DB::table('room_types')->get();
+        return view('room.addroom', compact('roomTypes'));
     }
     // edit room
     public function editRoom($bkg_room_id)
     {
-        $roomEdit = DB::table('rooms')->where('bkg_room_id',$bkg_room_id)->first();
-        $data = DB::table('room_types')->get();
-        $user = DB::table('users')->get();
-        return view('room.editroom',compact('user','data','roomEdit'));
+        $roomEdit = Room::where('bkg_room_id', $bkg_room_id)->firstOrFail();
+        $roomTypes = DB::table('room_types')->get();
+        return view('room.editroom', compact('roomTypes', 'roomEdit'));
     }
 
     // save record room
     public function saveRecordRoom(Request $request)
     {
-        $request->validate([
+        // Validate only existing columns until migration is run
+        $validation = [
             'name'          => 'required|string|max:255',
             'room_type'     => 'required|string|max:255',
             'ac_non_ac'     => 'required|string|max:255',
             'food'          => 'required|string|max:255',
-            'bed_count'     => 'required|string|max:255',
-            'charges_for_cancellation' => 'required|string|max:255',
-            'rent'          => 'required|string|max:255',
-            'phone_number'  => 'required|string|max:255',
-            'fileupload'    => 'required|file',
-            'message'       => 'required|string|max:255',
-        ]);
+            'bed_count'     => 'required|numeric|min:1',
+            'charges_for_cancellation' => 'required|numeric|min:0',
+            'rent'          => 'required|numeric|min:0',
+            'phone_number'  => 'nullable|string|max:255',
+            'fileupload'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'message'       => 'nullable|string|max:255',
+        ];
+
+        // Add validation for new columns only if they exist in the request
+        if ($request->has('room_number')) {
+            $validation['room_number'] = 'nullable|string|max:255';
+        }
+        if ($request->has('floor_number')) {
+            $validation['floor_number'] = 'nullable|integer|min:1';
+        }
+        if ($request->has('max_occupancy')) {
+            $validation['max_occupancy'] = 'nullable|integer|min:1';
+        }
+        if ($request->has('status')) {
+            $validation['status'] = 'nullable|in:available,occupied,maintenance,dirty,out_of_order';
+        }
+
+        $request->validate($validation);
 
         DB::beginTransaction();
         try {
+            // Generate room ID
+            $bkg_room_id = 'RM-' . str_pad((Room::count() + 1), 4, '0', STR_PAD_LEFT);
 
-            $photo= $request->fileupload;
-            $file_name = rand() . '.' .$photo->getClientOriginalName();
-            $photo->move(public_path('/assets/upload/'), $file_name);
-           
+            $file_name = null;
+            if ($request->hasFile('fileupload')) {
+                $photo = $request->file('fileupload');
+                $file_name = time() . '_' . $photo->getClientOriginalName();
+                $photo->move(public_path('/assets/upload/'), $file_name);
+            }
+
             $room = new Room;
-            $room->name         = $request->name;
-            $room->room_type    = $request->room_type;
-            $room->ac_non_ac    = $request->ac_non_ac;
-            $room->food         = $request->food;
-            $room->bed_count    = $request->bed_count;
-            $room->charges_for_cancellation   = $request->charges_for_cancellation;
-            $room->rent         = $request->rent;
+            $room->bkg_room_id = $bkg_room_id;
+            $room->name = $request->name;
+            $room->room_type = $request->room_type;
+            $room->ac_non_ac = $request->ac_non_ac;
+            $room->food = $request->food;
+            $room->bed_count = $request->bed_count;
+            $room->charges_for_cancellation = $request->charges_for_cancellation;
+            $room->rent = $request->rent;
             $room->phone_number = $request->phone_number;
-            $room->fileupload   = $file_name;
-            $room->message      = $request->message;
+            $room->fileupload = $file_name;
+            $room->message = $request->message;
+            
+            // Try to save new enhanced fields (only if columns exist)
+            try {
+                if ($request->room_number && Schema::hasColumn('rooms', 'room_number')) {
+                    $room->room_number = $request->room_number;
+                }
+                if ($request->floor_number && Schema::hasColumn('rooms', 'floor_number')) {
+                    $room->floor_number = $request->floor_number;
+                }
+                if ($request->max_occupancy && Schema::hasColumn('rooms', 'max_occupancy')) {
+                    $room->max_occupancy = $request->max_occupancy;
+                }
+                if (Schema::hasColumn('rooms', 'status')) {
+                    $room->status = $request->status ?: 'available';
+                }
+                if (Schema::hasColumn('rooms', 'is_active')) {
+                    $room->is_active = true;
+                }
+            } catch (\Exception $e) {
+                // Ignore errors if columns don't exist yet
+            }
+            
             $room->save();
             
             DB::commit();
-            Toastr::success('Create new room successfully :)','Success');
+            Toastr::success('Room created successfully!', 'Success');
             return redirect()->route('form/allrooms/page');
             
         } catch(\Exception $e) {
             DB::rollback();
-            Toastr::error('Add Room fail :)','Error');
-            return redirect()->back();
+            Toastr::error('Failed to create room: ' . $e->getMessage(), 'Error');
+            return redirect()->back()->withInput();
         }
     }
 
