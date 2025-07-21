@@ -58,57 +58,50 @@
                                                                 href="{{ route('leavetype.edit', $type->id) }}">
                                                                 <i class="fas fa-pencil-alt m-r-5"></i> Edit
                                                             </a>
-                                                            <a class="dropdown-item deleteLeaveType" href="#"
-                                                                data-toggle="modal" data-target="#delete_leave_type_modal">
+                                                            <a href="javascript:void(0);"
+                                                                class="dropdown-item deleteLeaveType"
+                                                                onclick="confirmDelete({{ $type->id }})">
                                                                 <i class="fas fa-trash-alt m-r-5"></i> Delete
                                                             </a>
+                                                            <form id="delete-form-{{ $type->id }}"
+                                                                action="{{ route('leavetype.destroy', $type->id) }}"
+                                                                method="POST" style="display:none;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                            </form>
                                                         </div>
                                                     </div>
-
                                                     {{-- Hidden ID for Delete --}}
-                                                    <input type="hidden" class="leave_type_id" value="{{ $type->id }}">
+                                                    <input type="hidden" class="leave_type_id"
+                                                        value="{{ $type->id }}">
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
-                            </div> <!-- /.table-responsive -->
-                        </div> <!-- /.card-body -->
-                    </div> <!-- /.card -->
-                </div>
-            </div>
-        </div>
-
-        {{-- Delete Modal --}}
-        <div id="delete_leave_type_modal" class="modal fade delete-modal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-body text-center">
-                        <form action="{{ route('leavetype.destroy', $type->id) }}" method="POST" id="deleteLeaveTypeForm">
-                            @csrf
-                            @method('DELETE')
-                            <img src="{{ URL::to('assets/img/sent.png') }}" alt="" width="50" height="46">
-                            <h3>Are you sure you want to delete this Leave Type?</h3>
-                            <div class="mt-3">
-                                <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                                <button type="submit" class="btn btn-danger">Delete</button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        {{-- Delete JS --}}
-        @push('js')
-            <script>
-                $(document).on('click', '.deleteLeaveType', function() {
-                    var leaveTypeId = $(this).closest('tr').find('.leave_type_id').val();
-                    var action = '{{ route('leavetype.destroy', ':id') }}';
-                    action = action.replace(':id', leaveTypeId);
-                    $('#deleteLeaveTypeForm').attr('action', action);
-                });
-            </script>
-        @endpush
     </div>
 @endsection
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This action cannot be undone!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        });
+    }
+</script>

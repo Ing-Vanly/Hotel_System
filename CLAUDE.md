@@ -4,170 +4,167 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a hotel management system built with Laravel 10, featuring customer management, room booking, employee management, leave management, and role-based permissions. The system uses Spatie Laravel Permission for role management and includes a comprehensive admin interface.
+This is a Laravel 10 hotel management system with comprehensive functionality for managing bookings, customers, rooms, employees, and role-based access control. The system includes front desk operations, housekeeping management, employee leave tracking, and customer relationship management.
 
-## Core Architecture
+## Technology Stack
 
-**Backend Framework**: Laravel 10 with PHP 8.1+
-**Frontend**: Blade templates with Bootstrap, AlpineJS, and Tailwind CSS
-**Database**: MySQL with comprehensive migrations
-**Authentication**: Laravel Breeze with custom multi-auth system
-**Permissions**: Spatie Laravel Permission package for role-based access control
-
-### Key Models and Relationships
-- `User` - System users with roles and permissions
-- `Employee` - Hotel staff with personal details, positions, and salaries
-- `Customer` - Hotel guests with auto-generated customer IDs
-- `Booking` - Room reservations linked to customers
-- `Room` - Hotel rooms with types and availability
-- `Leave` / `LeaveType` - Employee leave management system
-- `Role` - User roles with permissions using Spatie package
-
-### Core Modules
-1. **User Management** - Admin users, employees, role assignments
-2. **Customer Management** - Guest registration with auto-generated IDs
-3. **Room Management** - Room types, availability, and booking
-4. **Booking System** - Reservation management with file uploads
-5. **Employee Management** - Staff records, positions, salaries
-6. **Leave Management** - Leave types and leave applications
-7. **Role & Permissions** - Fine-grained access control
+- **Backend**: Laravel 10 (PHP 8.1+)
+- **Frontend**: Blade templates with Bootstrap, jQuery, Alpine.js
+- **Build Tool**: Vite with Laravel Vite Plugin
+- **Database**: MySQL (configured in .env as `hotel_db`)
+- **Authentication**: Laravel Sanctum + Laravel UI
+- **Permissions**: Spatie Laravel Permission package
+- **Notifications**: Laravel Toastr (brian2694/laravel-toastr)
 
 ## Development Commands
 
-### Setup
+### Essential Laravel Commands
 ```bash
+# Install dependencies
 composer install
 npm install
+
+# Environment setup
 cp .env.example .env
 php artisan key:generate
+
+# Database setup
 php artisan migrate
 php artisan db:seed
+
+# Run development server
+php artisan serve
+
+# Build assets
+npm run dev          # Development with hot reload
+npm run build        # Production build
+
+# Clear application cache
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Generate application key
+php artisan key:generate
+
+# Run database migrations
+php artisan migrate
+php artisan migrate:rollback
+php artisan migrate:fresh --seed
 ```
 
-### Development
+### Testing Commands
 ```bash
-php artisan serve          # Start development server
-npm run dev               # Start Vite development server
-npm run build            # Build assets for production
+# Run PHPUnit tests
+php artisan test
+
+# Run Pest tests (configured)
+./vendor/bin/pest
+
+# Run specific test
+php artisan test --filter=ExampleTest
 ```
 
-### Database
+### Code Quality Commands
 ```bash
-php artisan migrate              # Run migrations
-php artisan migrate:fresh --seed # Fresh migration with seeders
-php artisan db:seed             # Run seeders only
+# Laravel Pint (code formatting)
+./vendor/bin/pint
+
+# Debug with Laravel Debugbar (development only)
+# Accessible via web interface when APP_DEBUG=true
 ```
 
-### Testing
-```bash
-php artisan test          # Run PHPUnit tests
-./vendor/bin/pest         # Run Pest tests (alternative test runner)
-```
+## Application Architecture
 
-### Code Quality
-```bash
-./vendor/bin/pint         # Laravel Pint code formatting
-php artisan route:list    # List all routes
-php artisan optimize      # Optimize for production
-```
+### Core Business Modules
+1. **User Management**: Authentication, roles, permissions using Spatie Permission package
+2. **Hotel Operations**: Room management, booking system, customer management
+3. **Employee Management**: Staff records, leave management, role assignments
+4. **Front Desk**: Check-in/out operations, booking modifications
+5. **Housekeeping**: Room status management, maintenance tracking
 
-## Key Features
+### Data Model Architecture
+- **Users**: Authentication with dual role system (direct role_id + Spatie permissions)
+- **Bookings**: Complete reservation lifecycle (pending → confirmed → checked_in → checked_out)
+- **Rooms**: Status management (available, occupied, maintenance, dirty, out_of_order)
+- **Customers**: Guest information with auto-generated customer IDs
+- **Employees**: Staff management with leave tracking integration
+- **Role/Permission System**: Hybrid approach using both Spatie package and direct role assignment
 
-### Auto-Generated IDs
-The system includes custom ID generation for:
-- Customer IDs (auto-generated with sequences)
-- Booking IDs (auto-generated with sequences)
-- Room IDs (auto-generated with sequences)
+### Key Model Relationships
+- User ↔ Role (belongsTo with dual system)
+- Booking ↔ Customer, Room, RoomType (belongsTo relationships)
+- Room ↔ RoomType (belongsTo), Room ↔ Booking (hasMany)
+- Employee ↔ Leave (hasMany), Leave ↔ LeaveType (belongsTo)
 
-### File Upload System
-- Employee photos stored in `public/upload/`
-- Booking-related file uploads supported
-- Image handling with validation
+### Special Model Features
+- **Auto-Generated IDs**: User model auto-generates "KH_001" format IDs
+- **Soft Deletes**: Implemented on User model for data retention
+- **Status Workflows**: Comprehensive state management for bookings, rooms, leaves
+- **Legacy Compatibility**: Booking model maintains old field structure during migration
 
-### Role-Based Access Control
-Uses Spatie Laravel Permission with:
-- Dynamic role assignment
-- Permission-based route protection
-- Middleware-based access control
+## Database Configuration
 
-### Custom Blade Components
-- Application layout with sidebar navigation
-- Guest layout for authentication
-- Custom form components and inputs
-- Modal components for interactions
+Default database connection expects:
+- **Host**: 127.0.0.1
+- **Database**: hotel_db
+- **Username**: root
+- **Password**: (empty)
 
-## Database Structure
+Migrations include comprehensive hotel management schema with proper foreign key relationships.
 
-### Key Tables
-- `users` - System authentication
-- `employees` - Staff management
-- `customers` - Guest records
-- `bookings` - Reservation data
-- `rooms` - Room inventory
-- `leaves` / `leave_types` - Leave management
-- `roles` / `permissions` - Access control
-- Sequence tables for auto-generated IDs
+## Key Directories and Files
 
-### Migrations Location
-All migrations are in `database/migrations/` with chronological naming for proper execution order.
+### Application Structure
+- `app/Http/Controllers/`: Business logic controllers for each module
+- `app/Models/`: Eloquent models with relationships and business logic
+- `resources/views/`: Blade templates organized by functionality
+- `database/migrations/`: Database schema with hotel-specific tables
+- `database/seeders/`: Role and permission seeding
 
-## Frontend Assets
+### Important Configuration Files
+- `routes/web.php`: All web routes with middleware protection
+- `config/permission.php`: Spatie permission package configuration
+- `vite.config.js`: Frontend build configuration
+- `.env.example`: Environment configuration template
 
-### CSS Framework
-- **Primary**: Tailwind CSS for utilities
-- **Bootstrap**: Legacy components and layout
-- **Custom**: `public/assets/css/style.css` for theme styling
-
-### JavaScript
-- **Alpine.js** for reactive components
-- **jQuery** for legacy functionality
-- **Custom scripts** in `public/assets/js/script.js`
-
-### Asset Build
-Uses Vite for modern asset compilation with hot reloading support.
-
-## Important Conventions
-
-### Route Structure
-- Form routes use `form/` prefix (e.g., `form/allbooking`, `form/addcustomer/page`)
-- RESTful resource routes for role management
-- Middleware groups for authentication protection
-
-### Controller Organization
-Controllers are feature-organized:
-- `BookingController` - Reservation management
-- `CustomerController` - Guest management  
-- `EmployeeController` - Staff management
-- `UserManagementController` - System users
-- `RoleController` - Permission management
-
-### Model Conventions
-- Mass assignment protection with `$fillable` arrays
-- Standard Laravel naming conventions
-- Relationships defined where needed
-
-## Security Considerations
-
-### Authentication
-- Laravel Breeze for base authentication
-- Custom login/logout controllers
-- Password reset functionality
-- Email verification support
-
-### Authorization
-- Spatie Laravel Permission for granular control
-- Middleware protection on all admin routes
-- Role-based access to different modules
-
-### File Security
-- Upload validation and sanitization
-- Proper file storage location
-- Access control for uploaded files
+### Asset Management
+- CSS/JS assets in `public/assets/`
+- File uploads in `public/assets/upload/`
+- Vite builds from `resources/css/app.css` and `resources/js/app.js`
 
 ## Development Notes
 
-- The system uses a mix of traditional Laravel patterns and modern practices
-- Leave management is a newer feature with full CRUD operations
-- Employee management includes photo upload capabilities
-- Customer and booking systems have custom ID generation logic
-- The codebase includes both PHPUnit and Pest testing frameworks
+### Authentication & Authorization
+- Uses Laravel's built-in auth with custom registration
+- Implements Spatie Permission package for advanced role/permission management
+- Role-based access control throughout the application
+- Custom middleware for different user types
+
+### Business Logic Patterns
+- Controllers handle HTTP concerns and delegate to models
+- Models contain business rules and relationship logic
+- Blade components for reusable UI elements
+- Helper functions for common operations (e.g., set_active for navigation)
+
+### Data Validation
+- Form request validation classes in `app/Http/Requests/`
+- Model-level validation and business rules
+- Frontend validation with Bootstrap styling
+
+### File Upload Management
+- Image uploads stored in `public/assets/upload/`
+- Profile pictures and document management included
+
+## Testing Setup
+
+Project includes Pest testing framework with Laravel plugin. Test database should be configured separately from development database.
+
+## Deployment Considerations
+
+- Set `APP_ENV=production` and `APP_DEBUG=false` for production
+- Run `php artisan optimize` for production optimization
+- Configure proper database credentials
+- Set up proper file permissions for storage directories
+- Consider using queue workers for background jobs if needed

@@ -6,7 +6,6 @@ use App\Models\LeaveType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Brian2694\Toastr\Facades\Toastr;  // <-- Import Toastr here
 
 class LeaveTypeController extends Controller
 {
@@ -39,13 +38,11 @@ class LeaveTypeController extends Controller
             ]);
 
             DB::commit();
-            Toastr::success('Leave Type created successfully :)', 'Success');
-            return redirect()->route('leavetype.index');
+            return redirect()->route('leavetype.index')->with('success', 'Leave Type created successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('LeaveType Store Error: ' . $e->getMessage());
-            Toastr::error('Failed to create leave type :)', 'Error');
-            return back()->withInput();
+            return back()->with('error', 'Failed to create leave type. Please try again.');
         }
     }
 
@@ -75,18 +72,16 @@ class LeaveTypeController extends Controller
             ]);
 
             DB::commit();
-            Toastr::success('Leave Type updated successfully :)', 'Success');
-            return redirect()->route('leavetype.index');
+            return redirect()->route('leavetype.index')->with('success', 'Leave Type updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('LeaveType Update Error: ' . $e->getMessage());
-            Toastr::error('Failed to update leave type :)', 'Error');
-            return back()->withInput();
+            return back()->with('error', 'Failed to update leave type. Please try again.');
         }
     }
 
     public function destroy(string $id)
-    {
+    {                       
         try {
             DB::beginTransaction();
 
@@ -94,15 +89,11 @@ class LeaveTypeController extends Controller
             $leave_type->delete();
 
             DB::commit();
-
-            Toastr::success('Leave Type deleted successfully :)', 'Success');
-            return redirect()->route('leavetype.index');
+            return redirect()->route('leavetype.index')->with('success', 'Leave Type deleted successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('LeaveType Delete Error: ' . $e->getMessage());
-
-            Toastr::error('Failed to delete leave type. Please try again.', 'Error');
-            return redirect()->back();
+            return back()->with('error', 'Failed to delete leave type. Please try again.');
         }
     }
 }

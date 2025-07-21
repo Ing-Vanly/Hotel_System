@@ -4,6 +4,15 @@
     {!! Toastr::message() !!}
     <div class="page-wrapper">
         <div class="content container-fluid">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             {{-- Page Header --}}
             <div class="page-header">
@@ -20,7 +29,8 @@
                     <h4 class="card-title">Update Employee Information</h4>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ route('form.employee.update', $employee->id) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('form.employee.update', $employee->id) }}"
+                        enctype="multipart/form-data">
                         @csrf
 
                         {{-- Section: Personal Info --}}
@@ -44,7 +54,8 @@
                                 <div class="form-group">
                                     <label>Date of Birth</label>
                                     <input type="date" class="form-control" name="dob"
-                                        value="{{ old('dob', $employee->dob) }}">
+                                        value="{{ old('dob', \Carbon\Carbon::parse($employee->dob)->format('Y-m-d')) }}">
+
                                 </div>
                             </div>
                         </div>
@@ -82,7 +93,8 @@
                                 <div class="form-group">
                                     <label>Joining Date</label>
                                     <input type="date" class="form-control" name="joining_date"
-                                        value="{{ old('joining_date', $employee->joining_date) }}">
+                                        value="{{ old('joining_date', \Carbon\Carbon::parse($employee->joining_date)->format('Y-m-d')) }}">
+
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -114,9 +126,15 @@
                                 <div class="form-group">
                                     <label>Gender</label>
                                     <select class="form-control" name="gender">
-                                        <option value="male" {{ old('gender', $employee->gender) == 'male' ? 'selected' : '' }}>Male</option>
-                                        <option value="female" {{ old('gender', $employee->gender) == 'female' ? 'selected' : '' }}>Female</option>
-                                        <option value="other" {{ old('gender', $employee->gender) == 'other' ? 'selected' : '' }}>Other</option>
+                                        <option value="male"
+                                            {{ old('gender', $employee->gender) == 'male' ? 'selected' : '' }}>Male
+                                        </option>
+                                        <option value="female"
+                                            {{ old('gender', $employee->gender) == 'female' ? 'selected' : '' }}>Female
+                                        </option>
+                                        <option value="other"
+                                            {{ old('gender', $employee->gender) == 'other' ? 'selected' : '' }}>Other
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -128,9 +146,15 @@
                                             <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
                                         </div>
                                         <select name="status" class="form-control">
-                                            <option value="active" {{ old('status', $employee->status) == 'active' ? 'selected' : '' }}>Active</option>
-                                            <option value="inactive" {{ old('status', $employee->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                            <option value="terminated" {{ old('status', $employee->status) == 'terminated' ? 'selected' : '' }}>Terminated</option>
+                                            <option value="active"
+                                                {{ old('status', $employee->status) == 'active' ? 'selected' : '' }}>Active
+                                            </option>
+                                            <option value="inactive"
+                                                {{ old('status', $employee->status) == 'inactive' ? 'selected' : '' }}>
+                                                Inactive</option>
+                                            <option value="terminated"
+                                                {{ old('status', $employee->status) == 'terminated' ? 'selected' : '' }}>
+                                                Terminated</option>
                                         </select>
                                     </div>
                                 </div>
@@ -162,8 +186,8 @@
                                 @if ($employee->photo)
                                     <div class="card shadow-sm border rounded p-2">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('assets/upload/' . $employee->photo) }}" alt="Employee Photo"
-                                                class="rounded-circle mr-3"
+                                            <img src="{{ asset('assets/upload/' . $employee->photo) }}"
+                                                alt="Employee Photo" class="rounded-circle mr-3"
                                                 style="width: 70px; height: 70px; object-fit: cover; border: 2px solid #ddd;">
                                             <div>
                                                 <div class="font-weight-bold">{{ $employee->photo }}</div>

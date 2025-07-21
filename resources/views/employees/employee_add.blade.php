@@ -111,16 +111,17 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>National ID</label>
-                                    <input type="text" class="form-control @error('national_id') is-invalid @enderror"
-                                        name="national_id" value="{{ old('national_id') }}">
+                                    <input type="number" name="national_id" id="national_id" class="form-control"
+                                        oninput="padNationalId(this)" required>
+
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Salary</label>
                                     <input type="number" step="0.01"
-                                        class="form-control @error('salary') is-invalid @enderror"
-                                        name="salary" value="{{ old('salary') }}">
+                                        class="form-control @error('salary') is-invalid @enderror" name="salary"
+                                        value="{{ old('salary') }}">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -128,7 +129,8 @@
                                     <label>Gender</label>
                                     <select class="form-control @error('gender') is-invalid @enderror" name="gender">
                                         <option value="">Select</option>
-                                        <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                                        <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>Male
+                                        </option>
                                         <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>Female
                                         </option>
                                         <option value="other" {{ old('gender') == 'other' ? 'selected' : '' }}>Other
@@ -151,10 +153,12 @@
                                 <div class="form-group">
                                     <label>Photo</label>
                                     <div class="custom-file mb-3">
-                                        <input type="file" class="custom-file-input @error('photo') is-invalid @enderror"
-                                            id="photo" name="photo"
+                                        <input type="file"
+                                            class="custom-file-input @error('photo') is-invalid @enderror" id="photo"
+                                            name="photo"
                                             onchange="document.getElementById('photoLabel').innerText = this.files[0]?.name || 'Choose file'">
-                                        <label class="custom-file-label" id="photoLabel" for="photo">Choose file</label>
+                                        <label class="custom-file-label" id="photoLabel" for="photo">Choose
+                                            file</label>
                                     </div>
                                 </div>
                             </div>
@@ -165,7 +169,8 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-briefcase"></i></span>
                                         </div>
-                                        <select name="status" class="form-control @error('status') is-invalid @enderror">
+                                        <select name="status"
+                                            class="form-control @error('status') is-invalid @enderror">
                                             <option value="active"
                                                 {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
                                             <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>
@@ -189,3 +194,11 @@
         </div>
     </div>
 @endsection
+<script>
+    // National ID auto format
+    function padNationalId(input) {
+        let value = input.value.replace(/^0+/, ''); // remove leading 0s
+        if (value.length > 9) value = value.substring(0, 9); // max 9 digits
+        input.value = value;
+    }
+</script>

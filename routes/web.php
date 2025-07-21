@@ -135,31 +135,14 @@ Route::controller(RoomTypeController::class)->middleware('auth')->group(function
     Route::delete('form/roomtype/delete/{id}', 'destroy')->name('roomtype.destroy');
     Route::post('form/roomtype/available-rooms', 'getAvailableRoomsForDates')->name('roomtype.available-rooms');
 });
-
-// // ----------------------- user management -------------------------//
-// Route::controller(UserManagementController::class)->group(function () {
-//     Route::get('users/list/page', 'userList')->middleware('auth')->name('users/list/page');
-//     Route::get('users/add/new', 'userAddNew')->middleware('auth')->name('users/add/new');
-//     /** add new users */
-//     Route::get('users/add/edit/{user_id}', 'userView');
-//     /** add new users */
-//     Route::post('users/update', 'userUpdate')->name('users/update');
-//     /** update record */
-//     Route::get('users/delete/{id}', 'userDelete')->name('users/delete');
-//     /** delere record */
-//     Route::get('get-users-data', 'getUsersData')->name('get-users-data');
-//     /** get all data users */
-// });
-
 //user management
-Route::controller(UserManagementController::class)->group(function () {
-    Route::get('users/list/page', 'userList')->middleware('auth')->name('users/list/page');
-    Route::get('users/add/new', 'userAddNew')->middleware('auth')->name('users/add/new');
-    Route::get('users/add/edit/{user_id}', 'userView');
+Route::controller(UserManagementController::class)->middleware('auth')->group(function () {
+    Route::get('users/list/page', 'userList')->name('users/list/page');
+    Route::get('users/add/new', 'userAddNew')->name('users/add/new');
+    Route::post('users/store', 'userStore')->name('users/store');
+    Route::get('users/add/edit/{user_id}', 'userView')->name('users/edit');
     Route::post('users/update', 'userUpdate')->name('users/update');
-    Route::get('users/delete/{id}', 'userDelete')->name('users/delete');
-    Route::get('get-users-data', 'getUsersData')->name('get-users-data');
-    // Add this if you need a separate route for getting roles
+    Route::post('users/delete/{id}', 'userDelete')->name('users/delete');
     Route::get('get-roles', 'getRoles')->name('get-roles');
 });
 

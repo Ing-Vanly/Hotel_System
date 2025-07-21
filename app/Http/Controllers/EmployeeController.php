@@ -14,22 +14,29 @@ class EmployeeController extends Controller
     {
         $query = Employee::query();
 
-        if ($request->filled('employee_id')) {
-            $query->where('employee_id', 'like', '%' . $request->employee_id . '%');
-        }
         if ($request->filled('employee_name')) {
             $query->where(function ($q) use ($request) {
                 $q->where('first_name', 'like', '%' . $request->employee_name . '%')
                     ->orWhere('last_name', 'like', '%' . $request->employee_name . '%');
             });
         }
+
         if ($request->filled('role')) {
             $query->where('position', $request->role);
         }
 
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $positions = Employee::select('position')->distinct()->pluck('position'); // 👈 Get all unique positions
+
         $employees = $query->paginate(10);
-        return view('employees.employees_list', compact('employees'));
+
+        return view('employees.employees_list', compact('employees', 'positions'));
     }
+
+
 
     public function employeesAdd()
     {
@@ -76,7 +83,7 @@ class EmployeeController extends Controller
             $employee->dob = $request->dob;
             $employee->phone = $request->phone;
             $employee->email = $request->email;
-            $employee->national_id = $request->national_id;
+            $employee->national_id = str_pad($request->national_id, 9, '0', STR_PAD_LEFT);
             $employee->address = $request->address;
             $employee->position = $request->position;
             $employee->joining_date = $request->joining_date;
@@ -99,6 +106,10 @@ class EmployeeController extends Controller
     {
         try {
             $employee = Employee::findOrFail($id);
+
+            // Pad national_id to 9 digits with leading zeros for display in edit form
+            $employee->national_id = str_pad($employee->national_id, 9, '0', STR_PAD_LEFT);
+
             $roles = Role::all();
             return view('employees.employee_edit', compact('employee', 'roles'));
         } catch (\Exception $e) {
@@ -147,7 +158,8 @@ class EmployeeController extends Controller
                 'dob' => $request->dob,
                 'phone' => $request->phone,
                 'email' => $request->email,
-                'national_id' => $request->national_id,
+                // Pad national_id before saving
+                'national_id' => str_pad($request->national_id, 9, '0', STR_PAD_LEFT),
                 'address' => $request->address,
                 'position' => $request->position,
                 'joining_date' => $request->joining_date,
@@ -165,6 +177,7 @@ class EmployeeController extends Controller
             return redirect()->back()->withInput();
         }
     }
+
 
     public function deleteEmployee($id)
     {

@@ -27,6 +27,7 @@ class User extends Authenticatable
         'phone_number',
         'status',
         'role',
+        'role_id',
         'password',
         'image',
         'gender',
@@ -74,8 +75,30 @@ class User extends Authenticatable
             }
         });
     }
-    public function role()
+    /**
+     * Get the role that owns the user (direct relationship)
+     */
+    public function roleRelation()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * Accessor for role name - prioritizes direct role assignment
+     */
+    public function getRoleNameAttribute()
+    {
+        if ($this->roleRelation) {
+            return $this->roleRelation->name;
+        }
+        
+        // Fallback to Spatie roles
+        $spatieRoles = $this->getRoleNames();
+        if ($spatieRoles->isNotEmpty()) {
+            return $spatieRoles->first();
+        }
+        
+        // Fallback to direct role field
+        return $this->role ?? 'No Role';
     }
 }
