@@ -5,18 +5,20 @@
                 <li class="{{ set_active(['home']) }}"> <a href="{{ route('home') }}"><i class="fas fa-tachometer-alt"></i>
                         <span>Dashboard</span></a> </li>
                 <li class="list-divider"></li>
-                <li class="submenu"> <a href="#"><i class="fas fa-calendar-check"></i> <span> Reservations </span> <span
-                            class="menu-arrow"></span></a>
+                <li class="submenu"> <a href="#"><i class="fas fa-calendar-check"></i> <span> Reservations </span>
+                        <span class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
-                        <li><a class="{{ set_active(['reservations/all']) }}" href="{{ route('form/allbooking') }}"> All Reservations </a></li>
-                        <li><a class="{{ set_active(['reservations/new']) }}" href="{{ route('form/booking/add') }}"> New Reservation </a></li>
+                        <li><a class="{{ set_active(['reservations/all']) }}" href="{{ route('form/allbooking') }}"> All
+                                Reservations </a></li>
+                        <li><a class="{{ set_active(['reservations/new']) }}" href="{{ route('form/booking/add') }}">
+                                New Reservation </a></li>
                         <li><a href="#"> Today's Arrivals </a></li>
                         <li><a href="#"> Today's Departures </a></li>
                         <li><a href="#"> Reservation Calendar </a></li>
                     </ul>
                 </li>
-                <li class="submenu"> <a href="#"><i class="fas fa-concierge-bell"></i> <span> Front Desk </span> <span
-                            class="menu-arrow"></span></a>
+                <li class="submenu"> <a href="#"><i class="fas fa-concierge-bell"></i> <span> Front Desk </span>
+                        <span class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
                         <li><a href="#"> Check-in </a></li>
                         <li><a href="#"> Check-out </a></li>
@@ -65,17 +67,23 @@
                     <ul class="submenu_class" style="display: none;">
                         <li><a class="{{ set_active(['form/employee/list']) }}"
                                 href="{{ route('form.employee.list') }}">All Employees</a></li>
-                        <li><a class="{{ set_active(['form.employee.edit']) }}" href="">Edit Employees </a></li>
+                        <li>
+                            <a class="{{ set_active(['form.employee.edit']) }}"
+                                href="{{ route('form.employee.edit', ['id' => 1]) }}">Edit Employees</a>
+                        </li>
                         <li><a class="{{ set_active(['form/employee/add']) }}"
                                 href="{{ route('form.employee.add') }}">Add Employees</a></li>
-                        <li><a class="{{ set_active(['leavetype.index']) }}"
-                                href="{{ route('leavetype.index') }}">Type of Leaves</a></li>
-
-                        <li><a class="{{ set_active(['form/leaves/page']) }}" href="{{route('leave.index')}}">Leaves </a></li>
+                        <li>
+                            <a class="{{ set_active(['leavetype']) }}" href="{{ route('leavetype.index') }}">
+                                Type of Leaves
+                            </a>
+                        </li>
+                        <li><a class="{{ set_active(['leave']) }}" href="{{ route('leave.index') }}">Leaves</a></li>
                         <li><a href="attendance.html">Attendance </a></li>
                     </ul>
                 </li>
-                <li class="submenu"> <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Billing & Invoices </span>
+                <li class="submenu"> <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Billing &
+                            Invoices </span>
                         <span class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
                         <li><a href="#"> Guest Invoices </a></li>
@@ -112,11 +120,13 @@
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="submenu_class" style="display: none;">
-                        <li><a class="{{ set_active(['users/list/page']) }}" href="{{ route('users/list/page') }}">All
+                        <li><a class="{{ set_active(['users/list/page']) }}"
+                                href="{{ route('users/list/page') }}">All
                                 User</a></li>
                         <li><a class="{{ set_active(['users/add/new']) }}" href="{{ route('users/add/new') }}">Add
                                 User</a></li>
-                        <li><a class="{{ set_active(['role']) }}" href="{{ route('role.index') }}">Role Management</a>
+                        <li><a class="{{ set_active(['role']) }}" href="{{ route('role.index') }}">Role
+                                Management</a>
                         </li>
                         <li><a href="">User Log Activity </a></li>
                     </ul>

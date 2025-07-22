@@ -30,7 +30,7 @@ class LeaveController extends Controller
         // Debug: Get all employees first to see what we have
         $allEmployees = Employee::all();
         $activeEmployees = Employee::where('status', 'active')->get();
-        
+
         // For now, let's get all employees to debug the issue
         $employees = Employee::all();
         $leaveTypes = LeaveType::all();

@@ -1,5 +1,23 @@
 @extends('layouts.master')
 @section('content')
+    @push('css')
+        <style>
+            .avatar-placeholder {
+                width: 120px;
+                height: 120px;
+                background-color: #f8f9fa;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                font-size: 36px;
+                font-weight: bold;
+                color: #6c757d;
+                border: 2px solid #dee2e6;
+            }
+        </style>
+    @endpush
     {{-- message --}}
     {!! Toastr::message() !!}
     <div class="page-wrapper">
@@ -11,7 +29,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
@@ -30,7 +48,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-4">Position:</label>
@@ -39,7 +56,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-4">Leave Type:</label>
@@ -48,18 +64,23 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-4">Status:</label>
                                         <div class="col-md-8">
-                                            <span class="{{ $leave->status_badge }}">
-                                                {{ ucfirst($leave->status) }}
-                                            </span>
+                                            @if ($leave->status == 'approved')
+                                                <span class="btn btn-sm bg-success-light text-success">Approved</span>
+                                            @elseif ($leave->status == 'pending')
+                                                <span class="btn btn-sm bg-warning-light text-warning">Pending</span>
+                                            @elseif ($leave->status == 'rejected')
+                                                <span class="btn btn-sm bg-danger-light text-danger">Rejected</span>
+                                            @else
+                                                <span
+                                                    class="btn btn-sm bg-secondary-light text-muted">{{ ucfirst($leave->status) }}</span>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-4">Start Date:</label>
@@ -68,7 +89,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-4">End Date:</label>
@@ -77,26 +97,25 @@
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-4">Duration:</label>
                                         <div class="col-md-8">
-                                            <p class="form-control-plaintext">{{ $leave->duration }} {{ $leave->duration == 1 ? 'day' : 'days' }}</p>
+                                            <p class="form-control-plaintext">{{ $leave->duration }}
+                                                {{ $leave->duration == 1 ? 'day' : 'days' }}</p>
                                         </div>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-6">
                                     <div class="form-group row">
                                         <label class="col-form-label col-md-4">Applied On:</label>
                                         <div class="col-md-8">
-                                            <p class="form-control-plaintext">{{ $leave->created_at->format('d M Y, h:i A') }}</p>
+                                            <p class="form-control-plaintext">
+                                                {{ $leave->created_at->format('d M Y, h:i A') }}</p>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                @if($leave->reason)
+                                @if ($leave->reason)
                                     <div class="col-md-12">
                                         <div class="form-group row">
                                             <label class="col-form-label col-md-2">Reason:</label>
@@ -110,7 +129,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="col-lg-4">
                     <div class="card">
                         <div class="card-header">
@@ -118,9 +136,9 @@
                         </div>
                         <div class="card-body">
                             <div class="text-center">
-                                @if($leave->employee->photo)
-                                    <img src="{{ asset('upload/' . $leave->employee->photo) }}" alt="Employee Photo" 
-                                         class="img-fluid rounded-circle mb-3" width="120" height="120">
+                                @if ($leave->employee->photo)
+                                    <img alt="" src="{{ asset('assets/upload/' . $leave->employee->photo) }}"
+                                        class="img-fluid" width="100" height="100">
                                 @else
                                     <div class="avatar-placeholder mb-3">
                                         <span>{{ substr($leave->employee->first_name, 0, 1) }}{{ substr($leave->employee->last_name, 0, 1) }}</span>
@@ -133,14 +151,13 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title mb-0">Actions</h4>
                         </div>
                         <div class="card-body">
                             <div class="btn-group-vertical btn-block">
-                                @if($leave->status == 'pending')
+                                @if ($leave->status == 'pending')
                                     <a href="{{ route('leave.approve', $leave->id) }}" class="btn btn-success mb-2">
                                         <i class="fas fa-check"></i> Approve Leave
                                     </a>
@@ -148,15 +165,18 @@
                                         <i class="fas fa-times"></i> Reject Leave
                                     </a>
                                 @endif
-                                
                                 <a href="{{ route('leave.edit', $leave->id) }}" class="btn btn-primary mb-2">
                                     <i class="fas fa-pencil-alt"></i> Edit Leave
                                 </a>
-                                
-                                <button type="button" class="btn btn-danger mb-2" data-toggle="modal" data-target="#delete_leave">
+                                <form id="delete-leave-form" action="{{ route('leave.destroy', $leave->id) }}"
+                                    method="POST" style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                                <button type="button" class="btn btn-danger mb-2"
+                                    onclick="confirmLeaveDelete({{ $leave->id }})">
                                     <i class="fas fa-trash-alt"></i> Delete Leave
                                 </button>
-                                
                                 <a href="{{ route('leave.index') }}" class="btn btn-secondary">
                                     <i class="fas fa-arrow-left"></i> Back to List
                                 </a>
@@ -167,43 +187,22 @@
             </div>
         </div>
     </div>
-    
-    <!-- Delete Modal -->
-    <div id="delete_leave" class="modal fade delete-modal" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center">
-                    <img src="{{ asset('assets/img/sent.png') }}" alt="" width="50" height="46">
-                    <h3 class="delete_class">Are you sure you want to delete this leave request?</h3>
-                    <div class="m-t-20">
-                        <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                        <form method="POST" action="{{ route('leave.destroy', $leave->id) }}" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
-
-@section('style')
-<style>
-    .avatar-placeholder {
-        width: 120px;
-        height: 120px;
-        background-color: #f8f9fa;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-        font-size: 36px;
-        font-weight: bold;
-        color: #6c757d;
-        border: 2px solid #dee2e6;
+<script>
+    function confirmLeaveDelete(leaveId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This leave request will be deleted permanently!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-leave-form').submit();
+            }
+        });
     }
-</style>
-@endsection
+</script>

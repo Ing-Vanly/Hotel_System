@@ -14,7 +14,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <div class="col-sm-12">
                     <div class="card">
@@ -53,9 +52,19 @@
                                                 <td>{{ $leave->end_date->format('d M Y') }}</td>
                                                 <td>{{ $leave->duration }} {{ $leave->duration == 1 ? 'day' : 'days' }}</td>
                                                 <td>
-                                                    <span class="{{ $leave->status_badge }}">
-                                                        {{ ucfirst($leave->status) }}
-                                                    </span>
+                                                    @if ($leave->status == 'approved')
+                                                        <a href="#"
+                                                            class="btn btn-sm bg-success-light mr-2">Approved</a>
+                                                    @elseif ($leave->status == 'pending')
+                                                        <a href="#"
+                                                            class="btn btn-sm bg-warning-light mr-2">Pending</a>
+                                                    @elseif ($leave->status == 'rejected')
+                                                        <a href="#"
+                                                            class="btn btn-sm bg-danger-light mr-2">Rejected</a>
+                                                    @else
+                                                        <a href="#"
+                                                            class="btn btn-sm bg-secondary-light mr-2">{{ ucfirst($leave->status) }}</a>
+                                                    @endif
                                                 </td>
                                                 <td>{{ Str::limit($leave->reason, 30) }}</td>
                                                 <td class="text-right">
@@ -83,41 +92,20 @@
                                                                 href="{{ route('leave.edit', $leave->id) }}">
                                                                 <i class="fas fa-pencil-alt m-r-5"></i> Edit
                                                             </a>
-                                                            <a class="dropdown-item" href="#" data-toggle="modal"
-                                                                data-target="#delete_leave_{{ $leave->id }}">
+                                                            <form id="delete-form-{{ $leave->id }}"
+                                                                action="{{ route('leave.destroy', $leave->id) }}"
+                                                                method="POST" style="display: none;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                            </form>
+                                                            <a href="javascript:void(0);" class="dropdown-item"
+                                                                onclick="confirmDelete({{ $leave->id }})">
                                                                 <i class="fas fa-trash-alt m-r-5"></i> Delete
                                                             </a>
                                                         </div>
                                                     </div>
                                                 </td>
                                             </tr>
-
-                                            <!-- Delete Modal for each leave -->
-                                            <div id="delete_leave_{{ $leave->id }}" class="modal fade delete-modal"
-                                                role="dialog">
-                                                <div class="modal-dialog modal-dialog-centered">
-                                                    <div class="modal-content">
-                                                        <div class="modal-body text-center">
-                                                            <img src="{{ asset('assets/img/sent.png') }}" alt=""
-                                                                width="50" height="46">
-                                                            <h3 class="delete_class">Are you sure you want to delete this
-                                                                leave request?</h3>
-                                                            <div class="m-t-20">
-                                                                <a href="#" class="btn btn-white"
-                                                                    data-dismiss="modal">Close</a>
-                                                                <form method="POST"
-                                                                    action="{{ route('leave.destroy', $leave->id) }}"
-                                                                    style="display: inline;">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit"
-                                                                        class="btn btn-danger">Delete</button>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         @empty
                                             <tr>
                                                 <td colspan="8" class="text-center">No leave requests found.</td>
@@ -126,7 +114,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
                             <!-- Pagination -->
                             @if ($leaves->hasPages())
                                 <div class="d-flex justify-content-center">
@@ -139,5 +126,23 @@
             </div>
         </div>
     </div>
-
 @endsection
+<script>
+    // Delete Employee Confirmation
+   function confirmDelete(leaveId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This leave request will be permanently deleted!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + leaveId).submit();
+            }
+        });
+    }
+</script>

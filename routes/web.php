@@ -13,8 +13,8 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\RoomTypeController;
@@ -31,7 +31,6 @@ use App\Http\Controllers\HousekeepingController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 // set side bar active dynamic
 function set_active($route)
 {
@@ -40,6 +39,7 @@ function set_active($route)
     }
     return Request::path() == $route ? 'active' : '';
 }
+
 //Login
 Route::get('/', function () {
     return view('auth.login');
@@ -53,6 +53,7 @@ Route::group(['middleware' => 'auth'], function () {
         return view('home');
     });
 });
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -61,8 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
 require __DIR__ . '/auth.php';
-Auth::routes();
+// Auth::routes(); // Commented out - using Breeze routes instead
 
 //main dashboard
 Route::controller(HomeController::class)->group(function () {
@@ -83,7 +85,7 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('/register', 'storeUser')->name('register');
 });
 
-// forgor password
+// Custom forgot password (alternative route)
 Route::controller(ForgotPasswordController::class)->group(function () {
     Route::get('forget-password', 'getEmail')->name('forget-password');
     Route::post('forget-password', 'postEmail')->name('forget-password');
@@ -91,8 +93,8 @@ Route::controller(ForgotPasswordController::class)->group(function () {
 
 //reset password
 Route::controller(ResetPasswordController::class)->group(function () {
-    Route::get('reset-password/{token}', 'getPassword');
-    Route::post('reset-password', 'updatePassword');
+    Route::get('reset-password/{token}', 'getPassword')->name('password.reset');
+    Route::post('reset-password', 'updatePassword')->name('password.update');
 });
 
 //booking
