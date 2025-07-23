@@ -66,6 +66,7 @@
                         </li>
                     </ul>
                 </li>
+                
                 <li class="submenu"> <a href="#"><i class="fas fa-user"></i> <span> Employees </span> <span
                             class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
