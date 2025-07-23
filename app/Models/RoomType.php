@@ -17,7 +17,6 @@ class RoomType extends Model
         'amenities',
         'status',
     ];
-
     protected $casts = [
         'amenities' => 'array',
     ];
