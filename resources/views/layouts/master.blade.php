@@ -16,12 +16,8 @@
     <link rel="stylesheet" href="{{ URL::to('assets/css/style.css') }}">\
     {{-- Include jQuery and jQuery UI for datepicker functionality --}}
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
 </head>
 <link rel="stylesheet" type="text/css" href="{{ URL::to('assets/css/bootstrap-datetimepicker.min.css') }}">
-
-
-
 {{-- message toastr --}}
 <link rel="stylesheet" href="{{ URL::to('assets/css/toastr.min.css') }}">
 <script src="{{ URL::to('assets/js/toastr_jquery.min.js') }}"></script>
@@ -165,11 +161,7 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     {{-- sweetalert2 --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
-
     @yield('script')
-
 </body>
 
 </html>

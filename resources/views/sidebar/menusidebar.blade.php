@@ -58,8 +58,12 @@
                         <li><a class="{{ request()->is('form/room/edit/*') ? 'active' : '' }}"> Edit Rooms </a></li>
                         <li><a class="{{ set_active(['form/addroom/page']) }}"
                                 href="{{ route('form/addroom/page') }}"> Add Rooms </a></li>
-                        <li><a class="{{ set_active(['form/addroom/page']) }}"
-                                href="{{ route('roomtype.index') }}">Room Type </a></li>
+                        <li>
+                            <a class="{{ request()->is('form/roomtype/list') || request()->is('form/roomtype/create') || request()->is('form/roomtype/edit*') ? 'active' : '' }}"
+                                href="{{ route('roomtype.index') }}">
+                                Room Type
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="submenu"> <a href="#"><i class="fas fa-user"></i> <span> Employees </span> <span

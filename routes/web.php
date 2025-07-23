@@ -128,15 +128,15 @@ Route::controller(RoomsController::class)->group(function () {
 });
 
 //room types
-Route::controller(RoomTypeController::class)->middleware('auth')->group(function () {
-    Route::get('form/roomtype/list', 'index')->name('roomtype.index');
-    Route::get('form/roomtype/create', 'create')->name('roomtype.create');
-    Route::post('form/roomtype/store', 'store')->name('roomtype.store');
-    Route::get('form/roomtype/edit/{id}', 'edit')->name('roomtype.edit');
-    Route::put('form/roomtype/update/{id}', 'update')->name('roomtype.update');
-    Route::delete('form/roomtype/delete/{id}', 'destroy')->name('roomtype.destroy');
-    Route::post('form/roomtype/available-rooms', 'getAvailableRoomsForDates')->name('roomtype.available-rooms');
+Route::middleware('auth')->prefix('form/roomtype')->name('roomtype.')->controller(RoomTypeController::class)->group(function () {
+    Route::get('list', 'index')->name('index');
+    Route::get('create', 'create')->name('create');
+    Route::post('store', 'store')->name('store');
+    Route::get('edit/{id}', 'edit')->name('edit');
+    Route::put('update/{id}', 'update')->name('update');
+    Route::delete('delete/{id}', 'destroy')->name('destroy');
 });
+
 //user management
 Route::controller(UserManagementController::class)->middleware('auth')->group(function () {
     Route::get('users/list/page', 'userList')->name('users/list/page');
