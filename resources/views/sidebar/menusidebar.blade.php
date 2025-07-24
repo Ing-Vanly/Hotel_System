@@ -66,7 +66,7 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <li class="submenu"> <a href="#"><i class="fas fa-user"></i> <span> Employees </span> <span
                             class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
@@ -134,6 +134,19 @@
                                 Management</a>
                         </li>
                         <li><a href="">User Log Activity </a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#">
+                        <i class="fas fa-cogs"></i>
+                        <span> Business Settings </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <ul class="submenu_class" style="display: none;">
+                        <li><a class="{{ set_active(['business-settings']) }}"
+                                href="{{ route('business-settings.index') }}">View Settings</a></li>
+                        <li><a class="{{ set_active(['business-settings/edit']) }}"
+                                href="{{ route('business-settings.edit') }}">Edit Settings</a></li>
                     </ul>
                 </li>
             </ul>

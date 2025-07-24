@@ -20,6 +20,7 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\RoomTypeController;
 use App\Http\Controllers\FrontDeskController;
 use App\Http\Controllers\HousekeepingController;
+use App\Http\Controllers\BusinessSettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -148,7 +149,7 @@ Route::controller(UserManagementController::class)->middleware('auth')->group(fu
     Route::get('get-roles', 'getRoles')->name('get-roles');
 });
 
-
+//Employee management
 Route::controller(EmployeeController::class)->middleware('auth')->group(function () {
     Route::get('form/employee/list', 'employeesList')->name('form.employee.list');
     Route::get('form/employee/add', 'employeesAdd')->name('form.employee.add');
@@ -200,4 +201,17 @@ Route::controller(HousekeepingController::class)->middleware('auth')->group(func
     Route::get('housekeeping/reports', 'housekeepingReports')->name('housekeeping.reports');
     Route::get('housekeeping/lost-found', 'lostAndFound')->name('housekeeping.lost-found');
     Route::post('housekeeping/lost-found', 'addLostFoundItem')->name('housekeeping.add-lost-found');
+});
+
+//business settings
+Route::controller(BusinessSettingController::class)->middleware('auth')->group(function () {
+    Route::get('business-settings', 'index')->name('business-settings.index');
+    Route::get('business-settings/edit', 'edit')->name('business-settings.edit');
+    Route::put('business-settings/update', 'update')->name('business-settings.update');
+    // Tabbed sections
+    Route::get('business-settings/general', 'general')->name('business-settings.general');
+    Route::get('business-settings/contact', 'contact')->name('business-settings.contact');
+    Route::get('business-settings/branding', 'branding')->name('business-settings.branding');
+    // Section updates
+    Route::put('business-settings/update/{section}', 'updateSection')->name('business-settings.update-section');
 });
