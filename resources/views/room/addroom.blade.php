@@ -1,21 +1,32 @@
 @extends('layouts.master')
 @section('content')
-    {{-- message --}}
     {!! Toastr::message() !!}
     <div class="page-wrapper">
         <div class="content container-fluid">
             <div class="page-header">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h3 class="page-title mt-5">Add Room</h3>
+                        <h3 class="page-title mt-4">Add Room</h3>
                     </div>
                 </div>
             </div>
-            <form action="{{ route('form/room/save') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="row formtype">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Room Details</h4>
+                </div>
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form action="{{ route('form/room/save') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Room Name <span class="text-danger">*</span></label>
@@ -244,11 +255,18 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="d-flex justify-content-end mt-4 gap-2">
+                            <a href="{{ route('form/allrooms/page') }}" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                style="margin-right:10px">
+                                <i class="fas fa-times-circle mr-1"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-success btn-sm rounded-pill px-3">
+                                <i class="fas fa-save mr-1"></i> Save
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-primary buttonedit ml-2">Save</button>
-                <button type="button" class="btn btn-primary buttonedit">Cancel</button>
-            </form>
+            </div>
         </div>
     </div>
 @endsection

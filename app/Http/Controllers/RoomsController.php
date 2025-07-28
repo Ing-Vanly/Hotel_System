@@ -128,25 +128,40 @@ class RoomsController extends Controller
     // update record
     public function updateRecord(Request $request)
     {
+        // Validate input
+        $validation = [
+            'name'          => 'required|string|max:255',
+            'room_type'     => 'required|string|max:255',
+            'ac_non_ac'     => 'required|string|max:255',
+            'food'          => 'required|string|max:255',
+            'bed_count'     => 'required|numeric|min:1',
+            'charges_for_cancellation' => 'required|numeric|min:0',
+            'rent'          => 'required|numeric|min:0',
+            'phone_number'  => 'nullable|string|max:255',
+            'fileupload'    => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'message'       => 'nullable|string|max:255',
+        ];
+
+        $request->validate($validation);
+
         DB::beginTransaction();
         try {
-
             if (!empty($request->fileupload)) {
                 $photo = $request->fileupload;
-                $file_name = rand() . '.' . $photo->getClientOriginalExtension();
+                $file_name = time() . '_' . $photo->getClientOriginalName();
                 $photo->move(public_path('/assets/upload/'), $file_name);
             } else {
                 $file_name = $request->hidden_fileupload;
             }
 
             $update = [
-                'bkg_room_id' => $request->bkg_room_id,
                 'name'   => $request->name,
                 'room_type'  => $request->room_type,
                 'ac_non_ac'  => $request->ac_non_ac,
                 'food'  => $request->food,
                 'bed_count'  => $request->bed_count,
                 'charges_for_cancellation'  => $request->charges_for_cancellation,
+                'rent'  => $request->rent,
                 'phone_number' => $request->phone_number,
                 'fileupload'=> $file_name,
                 'message'   => $request->message,
@@ -154,12 +169,12 @@ class RoomsController extends Controller
             Room::where('bkg_room_id',$request->bkg_room_id)->update($update);
         
             DB::commit();
-            Toastr::success('Updated room successfully :)','Success');
-            return redirect()->back();
+            Toastr::success('Updated room successfully!','Success');
+            return redirect()->route('form/allrooms/page');
         } catch(\Exception $e) {
             DB::rollback();
-            Toastr::error('Update room fail :)','Error');
-            return redirect()->back();
+            Toastr::error('Update room failed: ' . $e->getMessage(),'Error');
+            return redirect()->back()->withInput();
         }
     }
 

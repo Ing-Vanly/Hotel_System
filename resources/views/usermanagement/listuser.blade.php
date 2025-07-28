@@ -89,13 +89,11 @@
                                             <div class="form-group">
                                                 <label for="search">Search:</label>
                                                 <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                                    </div>
                                                     <input type="text" name="search" id="search" class="form-control"
                                                         placeholder="Search users..." value="{{ request('search') }}">
-                                                    <div class="input-group-append">
-                                                        <button class="btn btn-primary" type="submit">
-                                                            <i class="fas fa-search"></i>
-                                                        </button>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -103,10 +101,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <button type="button" class="btn btn-secondary" id="clear-filters">
-                                                <i class="fas fa-times mr-2"></i>Clear Filters
-                                            </button>
-                                            <button type="submit" class="btn btn-primary ml-2">
-                                                <i class="fas fa-filter mr-2"></i>Apply Filters
+                                                <i class="fas fa-times mr-2"></i>Clear All Filters
                                             </button>
                                         </div>
                                     </div>
@@ -344,15 +339,25 @@ $phone =
 
         <script type="text/javascript">
             $(document).ready(function() {
+                let searchTimeout;
+
                 // Clear filters functionality
                 $('#clear-filters').click(function() {
                     $('#filterForm')[0].reset();
                     window.location.href = '{{ route('users/list/page') }}';
                 });
 
-                // Auto-submit form when filters change
+                // Auto-submit form when filters change (immediate)
                 $('#role, #status, #gender, #per_page').change(function() {
                     $('#filterForm').submit();
+                });
+
+                // Auto-submit form when search input changes (with delay)
+                $('#search').on('input', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(function() {
+                        $('#filterForm').submit();
+                    }, 800); // 800ms delay for search
                 });
 
                 // Delete user with SweetAlert

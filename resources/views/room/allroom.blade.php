@@ -76,9 +76,16 @@
                                                         <a class="dropdown-item" href="{{ url('form/room/edit/'.$rooms->bkg_room_id) }}">
                                                             <i class="fas fa-pencil-alt m-r-5"></i> Edit
                                                         </a>
-                                                        <a class="dropdown-item delete_asset" href="#" data-toggle="modal" data-target="#delete_asset">
+                                                        <a class="dropdown-item" href="#" onclick="confirmDelete('{{ $rooms->id }}', '{{ $rooms->name }}', '{{ $rooms->fileupload }}')">
                                                             <i class="fas fa-trash-alt m-r-5"></i> Delete
                                                         </a>
+                                                        <form id="delete-form-{{ $rooms->id }}"
+                                                            action="{{ route('form/room/delete') }}"
+                                                            method="POST" style="display:none;">
+                                                            @csrf
+                                                            <input type="hidden" name="id" value="{{ $rooms->id }}">
+                                                            <input type="hidden" name="fileupload" value="{{ $rooms->fileupload }}">
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </td>
@@ -93,37 +100,43 @@
             </div>
         </div>
 
-        {{-- delete model --}}
-        <div id="delete_asset" class="modal fade delete-modal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-body text-center">
-                        <form action="{{ route('form/room/delete') }}" method="POST">
-                            @csrf
-                            <img src="{{ URL::to('assets/img/sent.png') }}" alt="" width="50" height="46">
-                            <h3 class="delete_class">Are you sure want to delete this Asset?</h3>
-                            <div class="m-t-20">
-                                <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                                <input class="form-control" type="hidden" id="e_id" name="id" value="">
-                                <input class="form-control" type="hidden" id="e_fileupload" name="fileupload" value="">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {{-- end delete model --}}
     </div>
     @section('script')
-        {{-- delete model --}}
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
         <script>
-            $(document).on('click','.delete_asset',function()
-            {
-                var _this = $(this).parents('tr');
-                $('#e_id').val(_this.find('.id').text());
-                $('#e_fileupload').val(_this.find('.fileupload').text());
-            });
+            function confirmDelete(roomId, roomName, fileupload) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: `You want to delete room "${roomName}"? This action cannot be undone!`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel',
+                    background: '#fff',
+                    customClass: {
+                        popup: 'animated fadeInDown'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Show loading
+                        Swal.fire({
+                            title: 'Deleting...',
+                            text: 'Please wait while we delete the room.',
+                            allowOutsideClick: false,
+                            showConfirmButton: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+                        
+                        document.getElementById('delete-form-' + roomId).submit();
+                    }
+                });
+            }
         </script>
     @endsection
 @endsection
