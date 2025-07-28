@@ -16,7 +16,7 @@ class BusinessSettingController extends Controller
     public function index()
     {
         $settings = BusinessSetting::getSettings();
-        return view('form.business_settings.index', compact('settings'));
+        return view('business_settings.index', compact('settings'));
     }
     /**
      * Show the form for editing business settings
@@ -24,7 +24,7 @@ class BusinessSettingController extends Controller
     public function edit()
     {
         $settings = BusinessSetting::getSettings();
-        return view('form.business_settings.edit', compact('settings'));
+        return view('business_settings.edit', compact('settings'));
     }
     /**
      * Update business settings
@@ -82,7 +82,7 @@ class BusinessSettingController extends Controller
     public function general()
     {
         $settings = BusinessSetting::getSettings();
-        return view('form.business_settings.general', compact('settings'));
+        return view('business_settings.general', compact('settings'));
     }
     /**
      * Show contact settings tab
@@ -90,7 +90,7 @@ class BusinessSettingController extends Controller
     public function contact()
     {
         $settings = BusinessSetting::getSettings();
-        return view('form.business_settings.contact', compact('settings'));
+        return view('business_settings.contact', compact('settings'));
     }
     /**
      * Show branding settings tab
@@ -98,7 +98,7 @@ class BusinessSettingController extends Controller
     public function branding()
     {
         $settings = BusinessSetting::getSettings();
-        return view('form.business_settings.branding', compact('settings'));
+        return view('business_settings.branding', compact('settings'));
     }
     /**
      * Update specific section

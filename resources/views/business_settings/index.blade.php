@@ -13,7 +13,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row">
                 <!-- General Information -->
                 <div class="col-xl-4 col-md-6">
@@ -59,7 +58,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Contact Information -->
                 <div class="col-xl-4 col-md-6">
                     <div class="card">
@@ -101,8 +99,6 @@
                         </div>
                     </div>
                 </div>
-
-
                 <!-- Social Media -->
                 @if ($settings->facebook_url || $settings->twitter_url || $settings->instagram_url || $settings->linkedin_url)
                     <div class="col-12">
