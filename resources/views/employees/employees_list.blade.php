@@ -68,7 +68,8 @@
                                                             {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive
                                                         </option>
                                                         <option value="terminated"
-                                                            {{ request('status') == 'terminated' ? 'selected' : '' }}>Terminated
+                                                            {{ request('status') == 'terminated' ? 'selected' : '' }}>
+                                                            Terminated
                                                         </option>
                                                     </select>
                                                 </div>
@@ -129,7 +130,7 @@
                                                                     class="btn btn-sm bg-danger-light mr-2">Inactive</a>
                                                             @elseif ($employee->status == 'terminated')
                                                                 <a href="#"
-                                                                    class="btn btn-sm bg-warning-light mr-2">Terminated</a>
+                                                                    class="btn   btn-sm bg-warning-light mr-2">Terminated</a>
                                                             @else
                                                                 <a href="#"
                                                                     class="btn btn-sm bg-secondary-light mr-2">{{ ucfirst($employee->status) }}</a>
