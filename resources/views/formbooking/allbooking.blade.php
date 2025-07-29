@@ -185,8 +185,11 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex align-items-start">
-                                                            @if ($booking->fileupload)
-                                                                <img src="{{ URL::to('/assets/upload/' . $booking->fileupload) }}"
+                                                            @php
+                                                                $customerImage = $booking->customer->fileupload ?? $booking->fileupload ?? null;
+                                                            @endphp
+                                                            @if ($customerImage)
+                                                                <img src="{{ URL::to('/assets/upload/' . $customerImage) }}"
                                                                     alt="Guest"
                                                                     class="avatar avatar-sm mr-2 rounded-circle"
                                                                     style="width: 40px; height: 40px; object-fit: cover;">

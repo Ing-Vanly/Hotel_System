@@ -34,20 +34,35 @@
                                         value="{{ $bookingEdit->bkg_id }}" readonly>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Guest Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('guest_name') is-invalid @enderror"
-                                        name="guest_name"
-                                        value="{{ old('guest_name', $bookingEdit->guest_name ?? $bookingEdit->name) }}"
-                                        required>
-                                    @error('guest_name')
+                                    <label>Customer</label>
+                                    <select class="form-control @error('customer_id') is-invalid @enderror"
+                                        name="customer_id" id="customer_id">
+                                        <option value="">Select Customer</option>
+                                        @if (isset($customers))
+                                            @foreach ($customers as $customer)
+                                                <option value="{{ $customer->id }}"
+                                                    data-name="{{ $customer->name ?? $customer->customer_name }}"
+                                                    data-email="{{ $customer->email }}"
+                                                    data-phone="{{ $customer->ph_number }}"
+                                                    data-file="{{ $customer->fileupload }}"
+                                                    data-image="{{ $customer->fileupload ? asset('assets/upload/' . $customer->fileupload) : '' }}"
+                                                    {{ old('customer_id', $bookingEdit->customer_id) == $customer->id ? 'selected' : '' }}>
+                                                    {{ $customer->name ?? $customer->customer_name }}
+                                                    ({{ $customer->customer_id ?? $customer->id }})
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    @error('customer_id')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
                                 </div>
                             </div>
+
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Guest Email</label>
@@ -74,23 +89,14 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                           <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Customer</label>
-                                    <select class="form-control @error('customer_id') is-invalid @enderror"
-                                        name="customer_id" id="customer_id">
-                                        <option value="">Select Customer</option>
-                                        @if (isset($customers))
-                                            @foreach ($customers as $customer)
-                                                <option value="{{ $customer->id }}"
-                                                    {{ old('customer_id', $bookingEdit->customer_id) == $customer->id ? 'selected' : '' }}>
-                                                    {{ $customer->name ?? $customer->customer_name }}
-                                                    ({{ $customer->customer_id ?? $customer->id }})
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                    @error('customer_id')
+                                    <label>Guest Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control @error('guest_name') is-invalid @enderror"
+                                        name="guest_name"
+                                        value="{{ old('guest_name', $bookingEdit->guest_name ?? $bookingEdit->name) }}"
+                                        required>
+                                    @error('guest_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
@@ -385,13 +391,16 @@
                                             class="custom-file-input @error('fileupload') is-invalid @enderror"
                                             id="fileupload" name="fileupload">
                                         <input type="hidden" name="hidden_fileupload"
-                                            value="{{ $bookingEdit->fileupload }}">
+                                            value="{{ $bookingEdit->customer->fileupload ?? $bookingEdit->fileupload }}">
                                         <label class="custom-file-label" for="fileupload">Choose file</label>
                                     </div>
-                                    @if ($bookingEdit->fileupload)
+                                    @php
+                                        $currentImage = $bookingEdit->customer->fileupload ?? $bookingEdit->fileupload ?? null;
+                                    @endphp
+                                    @if ($currentImage)
                                         <div class="current-image mt-2">
                                             <p class="small text-muted">Current image:</p>
-                                            <img src="{{ URL::to('/assets/upload/' . $bookingEdit->fileupload) }}"
+                                            <img src="{{ URL::to('/assets/upload/' . $currentImage) }}"
                                                 alt="Current Booking Image" class="img-thumbnail"
                                                 style="width: 100px; height: 80px; object-fit: cover;">
                                         </div>
@@ -452,6 +461,7 @@
             });
 
             $('#room_id').on('change', updateRoomRate);
+            $('#customer_id').on('change', updateCustomerInfo);
 
             // If there's a pre-selected room (from old input), trigger the update
             if ($('#room_id').val()) {
@@ -461,6 +471,55 @@
             // Calculate total on page load
             calculateTotal();
         });
+
+        // Update customer information when customer is selected
+        function updateCustomerInfo() {
+            const selectedOption = $('#customer_id option:selected');
+            const customerId = selectedOption.val();
+
+            if (customerId) {
+                // Get customer data from option attributes
+                const customerName = selectedOption.data('name') || '';
+                const customerEmail = selectedOption.data('email') || '';
+                const customerPhone = selectedOption.data('phone') || '';
+                const customerFile = selectedOption.data('file') || '';
+                const customerImage = selectedOption.data('image') || '';
+
+                // Auto-fill guest information
+                $('input[name="guest_name"]').val(customerName);
+                $('input[name="guest_email"]').val(customerEmail);
+                $('input[name="guest_phone"]').val(customerPhone);
+
+                // Update file upload label if customer has a file
+                if (customerFile) {
+                    $('.custom-file-label').text(customerFile);
+                    // Update hidden field to preserve current image
+                    $('input[name="hidden_fileupload"]').val(customerFile);
+                }
+
+                // Update current image display
+                if (customerImage) {
+                    const currentImageHtml = `
+                        <div class="current-image mt-2">
+                            <p class="small text-muted">Current image:</p>
+                            <img src="${customerImage}" alt="Current Booking Image" class="img-thumbnail" style="width: 100px; height: 80px; object-fit: cover;">
+                        </div>
+                    `;
+                    $('.current-image').remove();
+                    $('.custom-file').after(currentImageHtml);
+                } else {
+                    $('.current-image').remove();
+                }
+            } else {
+                // Clear fields if no customer selected
+                $('input[name="guest_name"]').val('');
+                $('input[name="guest_email"]').val('');
+                $('input[name="guest_phone"]').val('');
+                $('.custom-file-label').text('Choose file');
+                $('input[name="hidden_fileupload"]').val('');
+                $('.current-image').remove();
+            }
+        }
 
         // Update room rate and auto-fill room type when room is selected
         function updateRoomRate() {

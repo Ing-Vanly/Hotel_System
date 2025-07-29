@@ -14,14 +14,34 @@ use DB;
 class BookingController extends Controller
 {
     // view page all booking
-    public function allbooking()
+    public function allbooking(Request $request)
     {
-        $allBookings = Booking::with(['customer', 'room', 'roomType'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $query = Booking::with(['customer', 'room', 'roomType']);
+
+        // Filter by guest name (search in both guest_name and legacy name fields)
+        if ($request->filled('guest_name')) {
+            $guestName = $request->guest_name;
+            $query->where(function ($q) use ($guestName) {
+                $q->where('guest_name', 'LIKE', '%' . $guestName . '%')
+                  ->orWhere('name', 'LIKE', '%' . $guestName . '%');
+            });
+        }
+
+        // Filter by booking status
+        if ($request->filled('booking_status')) {
+            $query->where('booking_status', $request->booking_status);
+        }
+
+        // Filter by payment status  
+        if ($request->filled('payment_status')) {
+            $query->where('payment_status', $request->payment_status);
+        }
+
+        $allBookings = $query->orderBy('created_at', 'desc')->paginate(10);
+        
         return view('formbooking.allbooking', compact('allBookings'));
     }
-    // booking add
+    // booking add  
     public function bookingAdd()
     {
         try {
@@ -59,18 +79,18 @@ class BookingController extends Controller
             $bookingEdit = Booking::with(['customer', 'room', 'roomType'])
                 ->where('bkg_id', $bkg_id)
                 ->first();
-            
+
             if (!$bookingEdit) {
                 Toastr::error('Booking not found!', 'Error');
                 return redirect()->route('form/allbooking');
             }
-            
+
             // Get all room types for dropdown
             $roomTypes = RoomType::all();
-            
+
             // Get all customers for dropdown
             $customers = Customer::all();
-            
+
             // Get available rooms (including current room if already assigned)
             $rooms = Room::where(function ($query) use ($bookingEdit) {
                 $query->where('status', 'available')
@@ -83,7 +103,7 @@ class BookingController extends Controller
                         ->where(function ($dateQuery) use ($bookingEdit) {
                             $checkIn = $bookingEdit->check_in_date ?? $bookingEdit->arrival_date;
                             $checkOut = $bookingEdit->check_out_date ?? $bookingEdit->depature_date;
-                            
+
                             if ($checkIn && $checkOut) {
                                 $dateQuery->whereBetween('check_in_date', [$checkIn, $checkOut])
                                     ->orWhereBetween('check_out_date', [$checkIn, $checkOut])
@@ -96,18 +116,18 @@ class BookingController extends Controller
                 })
                 ->with('roomType')
                 ->get();
-            
+
             return view('formbooking.bookingedit', compact('bookingEdit', 'roomTypes', 'customers', 'rooms'));
-            
+
         } catch (\Exception $e) {
             // Fallback to old method
             $bookingEdit = DB::table('bookings')->where('bkg_id', $bkg_id)->first();
-            
+
             if (!$bookingEdit) {
                 Toastr::error('Booking not found!', 'Error');
                 return redirect()->route('form/allbooking');
             }
-            
+
             // Try to get room types, customers, and rooms
             try {
                 $roomTypes = RoomType::all();
@@ -119,7 +139,7 @@ class BookingController extends Controller
                 $customers = collect();
                 $rooms = collect();
             }
-            
+
             return view('formbooking.bookingedit', compact('bookingEdit', 'roomTypes', 'customers', 'rooms'));
         }
     }
@@ -305,13 +325,13 @@ class BookingController extends Controller
             // Update room status based on booking status
             $oldRoomId = $booking->room_id;
             $newRoomId = $request->room_id;
-            
+
             if (Schema::hasColumn('rooms', 'status')) {
                 // If room changed, free up the old room
                 if ($oldRoomId && $oldRoomId != $newRoomId) {
                     Room::where('id', $oldRoomId)->update(['status' => 'available']);
                 }
-                
+
                 // Update new room status
                 if ($newRoomId) {
                     $newRoomStatus = 'occupied'; // default
