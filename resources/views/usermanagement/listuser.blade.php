@@ -19,7 +19,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Filters -->
                 <div class="row mb-3">
                     <div class="col-md-12">
@@ -98,19 +97,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    {{-- <div class="row">
                                         <div class="col-md-12">
                                             <button type="button" class="btn btn-secondary" id="clear-filters">
                                                 <i class="fas fa-times mr-2"></i>Clear All Filters
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <!-- Users Table -->
                 <div class="row">
                     <div class="col-sm-12">
@@ -142,36 +140,34 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                {{-- Handle status - default to 'active' if null or column doesn't exist --}}
                                                 @foreach ($users as $user)
                                                     @php
-                                                        // Handle status - default to 'active' if null or column doesn't exist
-$status = 'active';
-if (Schema::hasColumn('users', 'status') && $user->status) {
-    $status = $user->status;
-}
-$badgeClass =
-    $status === 'active' ? 'badge-success' : 'badge-danger';
-
-// Handle gender display
-$genderDisplay = '<span class="text-muted">-</span>';
-if ($user->gender) {
-    if ($user->gender === 'male') {
-        $genderDisplay =
-            '<i class="fas fa-mars text-primary mr-1"></i>Male';
-    } elseif ($user->gender === 'female') {
-        $genderDisplay =
-            '<i class="fas fa-venus text-danger mr-1"></i>Female';
-    } else {
-        $genderDisplay =
-            '<i class="fas fa-genderless text-info mr-1"></i>Other';
-    }
-}
-
-$age = $user->age
-    ? $user->age . ' years'
-    : '<span class="text-muted">-</span>';
-$phone =
-    $user->phone_number ?: '<span class="text-muted">-</span>';
+                                                        $status = 'active';
+                                                        if (Schema::hasColumn('users', 'status') && $user->status) {
+                                                            $status = $user->status;
+                                                        }
+                                                        $badgeClass =
+                                                            $status === 'active' ? 'badge-success' : 'badge-danger';
+                                                        // Handle gender display
+                                                        $genderDisplay = '<span class="text-muted">-</span>';
+                                                        if ($user->gender) {
+                                                            if ($user->gender === 'male') {
+                                                                $genderDisplay =
+                                                                    '<i class="fas fa-mars text-primary mr-1"></i>Male';
+                                                            } elseif ($user->gender === 'female') {
+                                                                $genderDisplay =
+                                                                    '<i class="fas fa-venus text-danger mr-1"></i>Female';
+                                                            } else {
+                                                                $genderDisplay =
+                                                                    '<i class="fas fa-genderless text-info mr-1"></i>Other';
+                                                            }
+                                                        }
+                                                        $age = $user->age
+                                                            ? $user->age . ' years'
+                                                            : '<span class="text-muted">-</span>';
+                                                        $phone =
+                                                            $user->phone_number ?: '<span class="text-muted">-</span>';
                                                     @endphp
                                                     <tr>
                                                         <td>{{ $user->user_id ?: 'N/A' }}</td>
@@ -221,7 +217,6 @@ $phone =
                                                                 @endif
                                                             </div>
                                                         </td>
-
                                                         <td>
                                                             <div class="dropdown">
                                                                 <button
@@ -291,7 +286,6 @@ $phone =
         </div>
         </div>
     @endsection
-
     @section('style')
         <style>
             .pagination-wrapper .pagination {
@@ -332,11 +326,9 @@ $phone =
             }
         </style>
     @endsection
-
     @section('script')
         <!-- SweetAlert2 -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
         <script type="text/javascript">
             $(document).ready(function() {
                 let searchTimeout;
@@ -436,3 +428,4 @@ $phone =
             });
         </script>
     @endsection
+@endsection

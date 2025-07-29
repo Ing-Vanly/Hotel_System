@@ -55,9 +55,9 @@ class Room extends Model
     public function currentBooking()
     {
         return $this->hasOne(Booking::class)
-                    ->whereIn('booking_status', ['confirmed', 'checked_in'])
-                    ->where('check_in_date', '<=', now())
-                    ->where('check_out_date', '>=', now());
+            ->whereIn('booking_status', ['confirmed', 'checked_in'])
+            ->where('check_in_date', '<=', now())
+            ->where('check_out_date', '>=', now());
     }
 
     // Check if room is available for given dates
@@ -68,16 +68,16 @@ class Room extends Model
         }
 
         return !$this->bookings()
-                    ->whereIn('booking_status', ['confirmed', 'checked_in'])
-                    ->where(function($query) use ($checkIn, $checkOut) {
-                        $query->whereBetween('check_in_date', [$checkIn, $checkOut])
-                              ->orWhereBetween('check_out_date', [$checkIn, $checkOut])
-                              ->orWhere(function($q) use ($checkIn, $checkOut) {
-                                  $q->where('check_in_date', '<=', $checkIn)
-                                    ->where('check_out_date', '>=', $checkOut);
-                              });
-                    })
-                    ->exists();
+            ->whereIn('booking_status', ['confirmed', 'checked_in'])
+            ->where(function ($query) use ($checkIn, $checkOut) {
+                $query->whereBetween('check_in_date', [$checkIn, $checkOut])
+                    ->orWhereBetween('check_out_date', [$checkIn, $checkOut])
+                    ->orWhere(function ($q) use ($checkIn, $checkOut) {
+                        $q->where('check_in_date', '<=', $checkIn)
+                            ->where('check_out_date', '>=', $checkOut);
+                    });
+            })
+            ->exists();
     }
 
     // Get status badge class

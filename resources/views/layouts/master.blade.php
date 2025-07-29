@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ \App\Models\BusinessSetting::getSettings()->hotel_name ?? 'Hotel' }}</title>
     <!-- Favicon from Business Settings -->
     <link rel="icon" type="image/x-icon" href="{{ \App\Models\BusinessSetting::getSettings()->favicon_url }}">

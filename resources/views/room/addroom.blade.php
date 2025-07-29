@@ -173,7 +173,6 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
-
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -193,7 +192,6 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
-
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -217,8 +215,6 @@
                                             <strong>{{ $message }}</strong>
                                         </span>
                                     @enderror
-
-
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -256,8 +252,8 @@
                             </div>
                         </div>
                         <div class="d-flex justify-content-end mt-4 gap-2">
-                            <a href="{{ route('form/allrooms/page') }}" class="btn btn-outline-danger btn-sm rounded-pill px-3"
-                                style="margin-right:10px">
+                            <a href="{{ route('form/allrooms/page') }}"
+                                class="btn btn-outline-danger btn-sm rounded-pill px-3" style="margin-right:10px">
                                 <i class="fas fa-times-circle mr-1"></i> Cancel
                             </a>
                             <button type="submit" class="btn btn-success btn-sm rounded-pill px-3">

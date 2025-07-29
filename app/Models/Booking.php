@@ -29,7 +29,7 @@ class Booking extends Model
         'booking_source',
         'fileupload',
         'notes',
-        
+
         // Legacy fields for backward compatibility
         'name',
         'room_type',
@@ -75,12 +75,12 @@ class Booking extends Model
         if ($this->check_in_date && $this->check_out_date) {
             return $this->check_in_date->diffInDays($this->check_out_date);
         }
-        
+
         // Fallback for legacy data
         if ($this->arrival_date && $this->depature_date) {
             return Carbon::parse($this->arrival_date)->diffInDays(Carbon::parse($this->depature_date));
         }
-        
+
         return 1;
     }
 
@@ -122,16 +122,16 @@ class Booking extends Model
     // Check if booking can be cancelled
     public function canBeCancelled()
     {
-        return in_array($this->booking_status ?? 'pending', ['pending', 'confirmed']) && 
-               $this->check_in_date > now();
+        return in_array($this->booking_status ?? 'pending', ['pending', 'confirmed']) &&
+            $this->check_in_date > now();
     }
 
     // Check if guest can check in
     public function canCheckIn()
     {
-        return $this->booking_status === 'confirmed' && 
-               $this->check_in_date <= now() && 
-               $this->check_out_date > now();
+        return $this->booking_status === 'confirmed' &&
+            $this->check_in_date <= now() &&
+            $this->check_out_date > now();
     }
 
     // Check if guest can check out
