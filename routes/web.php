@@ -21,6 +21,8 @@ use App\Http\Controllers\RoomTypeController;
 use App\Http\Controllers\FrontDeskController;
 use App\Http\Controllers\HousekeepingController;
 use App\Http\Controllers\BusinessSettingController;
+use App\Http\Controllers\ExpenseTypeController;
+use App\Http\Controllers\ExpenseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -215,4 +217,24 @@ Route::controller(BusinessSettingController::class)->middleware('auth')->group(f
     Route::get('business-settings/branding', 'branding')->name('business-settings.branding');
     // Section updates
     Route::put('business-settings/update/{section}', 'updateSection')->name('business-settings.update-section');
+});
+
+//expense type management
+Route::controller(ExpenseTypeController::class)->middleware('auth')->group(function () {
+    Route::get('form/expensetype/list', 'expenseTypesList')->name('form.expensetype.list');
+    Route::get('form/expensetype/add', 'expenseTypesAdd')->name('form.expensetype.add');
+    Route::post('form/expensetype/save', 'saveExpenseType')->name('form.expensetype.save');
+    Route::get('form/expensetype/edit/{id}', 'editExpenseType')->name('form.expensetype.edit');
+    Route::put('form/expensetype/update/{id}', 'updateExpenseType')->name('form.expensetype.update');
+    Route::delete('form/expensetype/delete/{id}', 'deleteExpenseType')->name('form.expensetype.delete');
+});
+
+//expense management
+Route::controller(ExpenseController::class)->middleware('auth')->group(function () {
+    Route::get('form/expense/list', 'expensesList')->name('form.expense.list');
+    Route::get('form/expense/add', 'expensesAdd')->name('form.expense.add');
+    Route::post('form/expense/save', 'saveExpense')->name('form.expense.save');
+    Route::get('form/expense/edit/{id}', 'editExpense')->name('form.expense.edit');
+    Route::put('form/expense/update/{id}', 'updateExpense')->name('form.expense.update');
+    Route::delete('form/expense/delete/{id}', 'deleteExpense')->name('form.expense.delete');
 });

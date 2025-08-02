@@ -8,10 +8,7 @@
                 <li class="submenu"> <a href="#"><i class="fas fa-calendar-check"></i> <span> Reservations </span>
                         <span class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
-                        <li><a class="{{ set_active(['reservations/all']) }}" href="{{ route('form/allbooking') }}"> All
-                                Reservations </a></li>
-                        <li><a class="{{ set_active(['reservations/new']) }}" href="{{ route('form/booking/add') }}">
-                                New Reservation </a></li>
+                        <li><a class="{{ request()->is('form/allbooking', 'form/booking/add', 'form/booking/edit/*') ? 'active' : '' }}" href="{{ route('form/allbooking') }}"> All Reservations </a></li>
                         <li><a href="#"> Today's Arrivals </a></li>
                         <li><a href="#"> Today's Departures </a></li>
                         <li><a href="#"> Reservation Calendar </a></li>
@@ -66,7 +63,6 @@
                         </li>
                     </ul>
                 </li>
-
                 <li class="submenu"> <a href="#"><i class="fas fa-user"></i> <span> Employees </span> <span
                             class="menu-arrow"></span></a>
                     <ul class="submenu_class" style="display: none;">
@@ -85,6 +81,23 @@
                         </li>
                         <li><a class="{{ set_active(['leave']) }}" href="{{ route('leave.index') }}">Leaves</a></li>
                         <li><a href="attendance.html">Attendance </a></li>
+                    </ul>
+                </li>
+                <li class="submenu"> <a href="#"><i class="fas fa-money-bill-wave"></i> <span> Expenses </span>
+                        <span class="menu-arrow"></span></a>
+                    <ul class="submenu_class" style="display: none;">
+                        <li><a class="{{ set_active(['form/expensetype/list']) }}"
+                                href="{{ route('form.expensetype.list') }}">Expense Types</a></li>
+                        <li><a class="{{ set_active(['form/expensetype/add']) }}"
+                                href="{{ route('form.expensetype.add') }}">Add Expense Type</a></li>
+                        <li><a class="{{ request()->is('form/expensetype/edit/*') ? 'active' : '' }}"
+                                href="#">Edit Expense Type</a></li>
+                        <li><a class="{{ set_active(['form/expense/list']) }}"
+                                href="{{ route('form.expense.list') }}">All Expenses</a></li>
+                        <li><a class="{{ set_active(['form/expense/add']) }}"
+                                href="{{ route('form.expense.add') }}">Add Expense</a></li>
+                        <li><a class="{{ request()->is('form/expense/edit/*') ? 'active' : '' }}" href="#">Edit
+                                Expense</a></li>
                     </ul>
                 </li>
                 <li class="submenu"> <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span> Billing &
